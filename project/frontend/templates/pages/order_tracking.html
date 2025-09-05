@@ -1,0 +1,528 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Tracking - AquaCare{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1><i class="fas fa-search me-3"></i>Order Tracking</h1>
+                <p class="mb-0">View and update delivery and order status</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-primary" onclick="bulkUpdateStatus()">
+                    <i class="fas fa-edit me-2"></i>Bulk Update
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-hourglass-half fa-3x text-warning mb-2"></i>
+                    <h4 class="text-warning">34</h4>
+                    <p class="text-muted">Pending Orders</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-truck fa-3x text-info mb-2"></i>
+                    <h4 class="text-info">18</h4>
+                    <p class="text-muted">In Transit</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
+                    <h4 class="text-success">142</h4>
+                    <p class="text-muted">Delivered Today</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-times-circle fa-3x text-danger mb-2"></i>
+                    <h4 class="text-danger">3</h4>
+                    <p class="text-muted">Failed Deliveries</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Quick Filters</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Order Status</label>
+                    <select class="form-select" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Customer Type</label>
+                    <select class="form-select" id="customerFilter">
+                        <option value="">All Customers</option>
+                        <option value="farmer">Farmers</option>
+                        <option value="agent">Agents</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Date Range</label>
+                    <select class="form-select" id="dateFilter">
+                        <option value="">All Dates</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Search Order</label>
+                    <input type="text" class="form-control" placeholder="Order ID or Customer" id="searchInput">
+                </div>
+            </div>
+            <div class="text-end">
+                <button class="btn btn-outline-secondary me-2" onclick="clearFilters()">Clear Filters</button>
+                <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3><i class="fas fa-list me-2"></i>Order Tracking List</h3>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-success" onclick="exportData()">
+                    <i class="fas fa-download me-2"></i>Export
+                </button>
+                <button class="btn btn-outline-info" onclick="refreshData()">
+                    <i class="fas fa-sync-alt me-2"></i>Refresh
+                </button>
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-info">
+                    <tr>
+                        <th>
+                            <input type="checkbox" class="form-check-input" id="selectAll">
+                        </th>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Total Value</th>
+                        <th>Status</th>
+                        <th>Order Date</th>
+                        <th>Expected Delivery</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="checkbox" class="form-check-input order-checkbox"></td>
+                        <td>
+                            <strong>#ORD-001</strong>
+                            <br><small class="text-muted">Priority: High</small>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-circle fa-2x text-success me-2"></i>
+                                <div>
+                                    <strong>John Farmer</strong>
+                                    <br><small class="text-muted">+1 555-0123</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="https://images.pexels.com/photos/2053342/pexels-photo-2053342.jpeg" 
+                                     alt="Atlantic Salmon" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                <span>Atlantic Salmon Fingerlings</span>
+                            </div>
+                        </td>
+                        <td>150 pieces</td>
+                        <td>$225.00</td>
+                        <td>
+                            <select class="form-select form-select-sm" onchange="updateOrderStatus(1, this.value)">
+                                <option value="pending">Pending</option>
+                                <option value="approved" selected>Approved</option>
+                                <option value="shipped">Shipped</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </td>
+                        <td>2024-03-15</td>
+                        <td>2024-03-17</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-outline-primary" onclick="viewOrderDetails(1)" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" onclick="trackOrder(1)" title="Track Order">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="contactCustomer(1)" title="Contact Customer">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="form-check-input order-checkbox"></td>
+                        <td>
+                            <strong>#ORD-002</strong>
+                            <br><small class="text-muted">Priority: Normal</small>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-circle fa-2x text-primary me-2"></i>
+                                <div>
+                                    <strong>Mike Agent</strong>
+                                    <br><small class="text-muted">+1 555-0456</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="https://images.pexels.com/photos/1108943/pexels-photo-1108943.jpeg" 
+                                     alt="Fish Feed" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                <span>High Protein Fish Feed</span>
+                            </div>
+                        </td>
+                        <td>50 kg</td>
+                        <td>$112.50</td>
+                        <td>
+                            <select class="form-select form-select-sm" onchange="updateOrderStatus(2, this.value)">
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="shipped" selected>Shipped</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </td>
+                        <td>2024-03-14</td>
+                        <td>2024-03-16</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-outline-primary" onclick="viewOrderDetails(2)" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" onclick="trackOrder(2)" title="Track Order">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="contactCustomer(2)" title="Contact Customer">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="form-check-input order-checkbox"></td>
+                        <td>
+                            <strong>#ORD-003</strong>
+                            <br><small class="text-muted">Priority: Low</small>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-circle fa-2x text-success me-2"></i>
+                                <div>
+                                    <strong>Sarah Farmer</strong>
+                                    <br><small class="text-muted">+1 555-0789</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="https://images.pexels.com/photos/1722650/pexels-photo-1722650.jpeg" 
+                                     alt="Equipment" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                <span>Aerator Pump System</span>
+                            </div>
+                        </td>
+                        <td>2 units</td>
+                        <td>$300.00</td>
+                        <td>
+                            <select class="form-select form-select-sm" onchange="updateOrderStatus(3, this.value)">
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="shipped">Shipped</option>
+                                <option value="delivered" selected>Delivered</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </td>
+                        <td>2024-03-13</td>
+                        <td>2024-03-15</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-outline-primary" onclick="viewOrderDetails(3)" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="viewDeliveryProof(3)" title="Delivery Proof">
+                                    <i class="fas fa-check-circle"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" onclick="requestFeedback(3)" title="Request Feedback">
+                                    <i class="fas fa-star"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Delivery Issues</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">Delayed Delivery - #ORD-045</h6>
+                                <p class="mb-1">Weather conditions causing delay</p>
+                                <small class="text-muted">Expected: Tomorrow</small>
+                            </div>
+                            <span class="badge bg-warning">Delayed</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">Address Issue - #ORD-032</h6>
+                                <p class="mb-1">Customer address needs verification</p>
+                                <small class="text-muted">Action required</small>
+                            </div>
+                            <span class="badge bg-danger">Urgent</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">Quality Concern - #ORD-028</h6>
+                                <p class="mb-1">Customer reported quality issue</p>
+                                <small class="text-muted">Under investigation</small>
+                            </div>
+                            <span class="badge bg-info">Review</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Delivery Performance</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="performanceChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal fade" id="orderDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-eye me-2"></i>Order Details - #ORD-001</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Customer Information</h6>
+                        <p><strong>Name:</strong> John Farmer</p>
+                        <p><strong>Phone:</strong> +1 555-0123</p>
+                        <p><strong>Email:</strong> john@example.com</p>
+                        <p><strong>Address:</strong> 123 Farm Road, Agriculture City</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Order Information</h6>
+                        <p><strong>Order Date:</strong> March 15, 2024</p>
+                        <p><strong>Expected Delivery:</strong> March 17, 2024</p>
+                        <p><strong>Priority:</strong> <span class="badge bg-danger">High</span></p>
+                        <p><strong>Total Value:</strong> $225.00</p>
+                    </div>
+                </div>
+                <hr>
+                <h6>Delivery Timeline</h6>
+                <div class="timeline">
+                    <div class="timeline-item completed">
+                        <i class="fas fa-check-circle text-success"></i>
+                        <span>Order placed and confirmed</span>
+                        <small class="text-muted">March 15, 09:00 AM</small>
+                    </div>
+                    <div class="timeline-item completed">
+                        <i class="fas fa-cog text-info"></i>
+                        <span>Order processed and approved</span>
+                        <small class="text-muted">March 15, 11:30 AM</small>
+                    </div>
+                    <div class="timeline-item active">
+                        <i class="fas fa-truck text-warning"></i>
+                        <span>Out for delivery</span>
+                        <small class="text-muted">March 16, 08:00 AM</small>
+                    </div>
+                    <div class="timeline-item pending">
+                        <i class="fas fa-home text-muted"></i>
+                        <span>Delivered to customer</span>
+                        <small class="text-muted">Expected: March 17, 10:00 AM</small>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info" onclick="contactCustomer(1)">Contact Customer</button>
+                <button type="button" class="btn btn-primary" onclick="updateDeliveryStatus(1)">Update Status</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline-item {
+    position: relative;
+    padding: 15px 0;
+    border-left: 2px solid #dee2e6;
+}
+
+.timeline-item.completed {
+    border-left-color: #28a745;
+}
+
+.timeline-item.active {
+    border-left-color: #ffc107;
+}
+
+.timeline-item i {
+    position: absolute;
+    left: -10px;
+    background: white;
+    padding: 2px;
+}
+
+.timeline-item span {
+    margin-left: 20px;
+    font-weight: 500;
+    display: block;
+}
+
+.timeline-item small {
+    margin-left: 20px;
+    display: block;
+    margin-top: 2px;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Performance Chart
+const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+new Chart(performanceCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['On Time', 'Delayed', 'Failed'],
+        datasets: [{
+            data: [85, 12, 3],
+            backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Functions
+function updateOrderStatus(orderId, status) {
+    showAlert(`Order #${orderId} status updated to ${status}`, 'success');
+}
+
+function viewOrderDetails(orderId) {
+    const modal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+    modal.show();
+}
+
+function trackOrder(orderId) {
+    showAlert(`Opening tracking details for order #${orderId}`, 'info');
+}
+
+function contactCustomer(orderId) {
+    showAlert(`Opening contact options for order #${orderId}`, 'info');
+}
+
+function bulkUpdateStatus() {
+    const checkedBoxes = document.querySelectorAll('.order-checkbox:checked');
+    if (checkedBoxes.length === 0) {
+        showAlert('Please select orders to update', 'warning');
+        return;
+    }
+    showAlert(`Bulk update initiated for ${checkedBoxes.length} orders`, 'info');
+}
+
+function applyFilters() {
+    showAlert('Filters applied successfully', 'success');
+}
+
+function clearFilters() {
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('customerFilter').value = '';
+    document.getElementById('dateFilter').value = '';
+    document.getElementById('searchInput').value = '';
+    showAlert('Filters cleared', 'info');
+}
+
+function exportData() {
+    showAlert('Exporting order data...', 'info');
+}
+
+function refreshData() {
+    showAlert('Data refreshed', 'success');
+}
+
+function viewDeliveryProof(orderId) {
+    showAlert(`Viewing delivery proof for order #${orderId}`, 'info');
+}
+
+function requestFeedback(orderId) {
+    showAlert(`Feedback request sent for order #${orderId}`, 'success');
+}
+
+// Select all functionality
+document.getElementById('selectAll').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.order-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = this.checked;
+    });
+});
+</script>
+{% endblock %}

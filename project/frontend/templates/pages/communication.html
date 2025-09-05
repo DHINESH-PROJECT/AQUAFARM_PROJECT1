@@ -1,0 +1,418 @@
+{% extends 'base.html' %}
+
+{% block title %}Communication Hub - AquaCare{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1><i class="fas fa-comments me-3"></i>Communication Hub</h1>
+                <p class="mb-0">Messaging and request tracking between agents, farmers, and producers</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-primary" onclick="composeMessage()">
+                    <i class="fas fa-plus me-2"></i>New Message
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-inbox fa-3x text-primary mb-2"></i>
+                    <h4 class="text-primary">23</h4>
+                    <p class="text-muted">Unread Messages</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-paper-plane fa-3x text-success mb-2"></i>
+                    <h4 class="text-success">156</h4>
+                    <p class="text-muted">Sent Messages</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-2"></i>
+                    <h4 class="text-warning">8</h4>
+                    <p class="text-muted">Urgent Requests</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x text-info mb-2"></i>
+                    <h4 class="text-info">45</h4>
+                    <p class="text-muted">Active Contacts</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-address-book me-2"></i>Contacts</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item list-group-item-action active">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-circle fa-3x text-success me-3"></i>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">John Farmer</h6>
+                                    <small>Last seen: 2 hours ago</small>
+                                    <span class="badge bg-danger float-end">3</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-circle fa-3x text-primary me-3"></i>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">AquaFarm Producer</h6>
+                                    <small>Online now</small>
+                                    <span class="badge bg-success float-end">●</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-circle fa-3x text-success me-3"></i>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">Sarah Farmer</h6>
+                                    <small>Last seen: 1 day ago</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-circle fa-3x text-primary me-3"></i>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">FeedCorp Producer</h6>
+                                    <small>Last seen: 3 hours ago</small>
+                                    <span class="badge bg-danger float-end">1</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-circle fa-3x text-success me-3"></i>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">Bob Farmer</h6>
+                                    <small>Last seen: 5 hours ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0"><i class="fas fa-comment me-2"></i>Conversation with John Farmer</h5>
+                        <small>Last seen: 2 hours ago</small>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-light me-2">
+                            <i class="fas fa-phone"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-light">
+                            <i class="fas fa-video"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body" style="height: 400px; overflow-y: auto;">
+                    <div class="chat-messages">
+                        <!-- Received Message -->
+                        <div class="message received mb-3">
+                            <div class="d-flex">
+                                <i class="fas fa-user-circle fa-2x text-success me-2"></i>
+                                <div class="message-content">
+                                    <div class="bg-light p-3 rounded">
+                                        <p class="mb-1">Hi Mike! I need to place an urgent order for Atlantic Salmon fingerlings. Can you help me coordinate with the producer?</p>
+                                        <small class="text-muted">10:30 AM</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Sent Message -->
+                        <div class="message sent mb-3">
+                            <div class="d-flex justify-content-end">
+                                <div class="message-content">
+                                    <div class="bg-primary text-white p-3 rounded">
+                                        <p class="mb-1">Hi John! Absolutely, I can help you with that. How many fingerlings do you need and when do you need them delivered?</p>
+                                        <small class="text-light">10:35 AM</small>
+                                    </div>
+                                </div>
+                                <i class="fas fa-user-circle fa-2x text-warning ms-2"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Received Message -->
+                        <div class="message received mb-3">
+                            <div class="d-flex">
+                                <i class="fas fa-user-circle fa-2x text-success me-2"></i>
+                                <div class="message-content">
+                                    <div class="bg-light p-3 rounded">
+                                        <p class="mb-1">I need about 500 fingerlings. Ideally by tomorrow morning if possible. It's for a new pond I just set up.</p>
+                                        <small class="text-muted">10:38 AM</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Sent Message -->
+                        <div class="message sent mb-3">
+                            <div class="d-flex justify-content-end">
+                                <div class="message-content">
+                                    <div class="bg-primary text-white p-3 rounded">
+                                        <p class="mb-1">Let me check with AquaFarm Producer right now. I'll get back to you within the hour with availability and pricing.</p>
+                                        <small class="text-light">10:42 AM</small>
+                                    </div>
+                                </div>
+                                <i class="fas fa-user-circle fa-2x text-warning ms-2"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- System Message -->
+                        <div class="message system mb-3">
+                            <div class="text-center">
+                                <small class="text-muted bg-light px-3 py-1 rounded">
+                                    <i class="fas fa-info-circle me-1"></i>Order #ORD-001 has been created
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <!-- Received Message -->
+                        <div class="message received mb-3">
+                            <div class="d-flex">
+                                <i class="fas fa-user-circle fa-2x text-success me-2"></i>
+                                <div class="message-content">
+                                    <div class="bg-light p-3 rounded">
+                                        <p class="mb-1">Perfect! Thank you so much for the quick response. I really appreciate your help with this urgent request.</p>
+                                        <small class="text-muted">11:15 AM</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Type your message..." id="messageInput">
+                        <button class="btn btn-outline-secondary" type="button">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <button class="btn btn-primary" type="button" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Urgent Requests</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">Emergency Feed Delivery</h6>
+                                <p class="mb-1">Sarah Farmer needs immediate feed delivery</p>
+                                <small class="text-muted">2 hours ago</small>
+                            </div>
+                            <span class="badge bg-danger">High</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">Equipment Malfunction</h6>
+                                <p class="mb-1">Bob Farmer reports aerator pump failure</p>
+                                <small class="text-muted">4 hours ago</small>
+                            </div>
+                            <span class="badge bg-warning">Medium</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">Quality Issue Report</h6>
+                                <p class="mb-1">Emma Farmer reports fish health concerns</p>
+                                <small class="text-muted">6 hours ago</small>
+                            </div>
+                            <span class="badge bg-danger">High</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-bell me-2"></i>Recent Notifications</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <div>
+                                    <h6 class="mb-1">Order Delivered Successfully</h6>
+                                    <small class="text-muted">Order #ORD-003 delivered to Emma Farmer</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-truck text-info me-3"></i>
+                                <div>
+                                    <h6 class="mb-1">Shipment In Transit</h6>
+                                    <small class="text-muted">Order #ORD-002 is on the way to Bob Farmer</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-dollar-sign text-success me-3"></i>
+                                <div>
+                                    <h6 class="mb-1">Commission Payment</h6>
+                                    <small class="text-muted">$85.50 commission has been processed</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Compose Message Modal -->
+<div class="modal fade" id="composeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Compose New Message</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">To</label>
+                        <select class="form-select" multiple>
+                            <option value="john">John Farmer</option>
+                            <option value="sarah">Sarah Farmer</option>
+                            <option value="aquafarm">AquaFarm Producer</option>
+                            <option value="feedcorp">FeedCorp Producer</option>
+                            <option value="bob">Bob Farmer</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Subject</label>
+                        <input type="text" class="form-control" placeholder="Enter message subject">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Priority</label>
+                        <select class="form-select">
+                            <option>Normal</option>
+                            <option>High</option>
+                            <option>Urgent</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-control" rows="6" placeholder="Type your message here..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Attachments</label>
+                        <input type="file" class="form-control" multiple>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-outline-primary">Save Draft</button>
+                <button type="button" class="btn btn-primary" onclick="sendNewMessage()">Send Message</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function composeMessage() {
+    const modal = new bootstrap.Modal(document.getElementById('composeModal'));
+    modal.show();
+}
+
+function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const message = input.value.trim();
+    
+    if (message) {
+        // Add message to chat (this would normally send to server)
+        showAlert('Message sent successfully!', 'success');
+        input.value = '';
+    }
+}
+
+function sendNewMessage() {
+    showAlert('Message sent successfully!', 'success');
+    const modal = bootstrap.Modal.getInstance(document.getElementById('composeModal'));
+    modal.hide();
+}
+
+// Auto-scroll chat to bottom
+document.addEventListener('DOMContentLoaded', function() {
+    const chatContainer = document.querySelector('.card-body[style*="overflow-y"]');
+    if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+});
+</script>
+
+<style>
+.message.sent .message-content {
+    max-width: 70%;
+}
+
+.message.received .message-content {
+    max-width: 70%;
+}
+
+.message.system {
+    margin: 20px 0;
+}
+
+.chat-messages {
+    padding: 10px 0;
+}
+
+.message {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+{% endblock %}

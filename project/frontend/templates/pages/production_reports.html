@@ -1,0 +1,348 @@
+{% extends 'base.html' %}
+
+{% block title %}Production Reports - AquaCare{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1><i class="fas fa-chart-line me-3"></i>Production Reports</h1>
+                <p class="mb-0">Track production data, harvest records, and quality checks</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-primary" onclick="generateProductionReport()">
+                    <i class="fas fa-file-alt me-2"></i>Generate Report
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-fish fa-3x text-primary mb-2"></i>
+                    <h4 class="text-primary">12,450</h4>
+                    <p class="text-muted">Total Fish Produced</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-weight fa-3x text-success mb-2"></i>
+                    <h4 class="text-success">8,750 kg</h4>
+                    <p class="text-muted">Total Harvest Weight</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-percentage fa-3x text-info mb-2"></i>
+                    <h4 class="text-info">94.5%</h4>
+                    <p class="text-muted">Survival Rate</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-star fa-3x text-warning mb-2"></i>
+                    <h4 class="text-warning">A+</h4>
+                    <p class="text-muted">Quality Grade</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-area me-2"></i>Production Trends</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="productionChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-pie-chart me-2"></i>Species Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="speciesChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3><i class="fas fa-table me-2"></i>Production Records</h3>
+            <div class="d-flex gap-2">
+                <select class="form-select" style="width: 150px;">
+                    <option>All Species</option>
+                    <option>Atlantic Salmon</option>
+                    <option>Rainbow Trout</option>
+                    <option>Tilapia</option>
+                </select>
+                <input type="month" class="form-control" style="width: 150px;">
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Batch ID</th>
+                        <th>Species</th>
+                        <th>Start Date</th>
+                        <th>Harvest Date</th>
+                        <th>Initial Count</th>
+                        <th>Final Count</th>
+                        <th>Total Weight (kg)</th>
+                        <th>Avg Weight (g)</th>
+                        <th>Survival Rate</th>
+                        <th>Quality Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#BATCH-001</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="https://images.pexels.com/photos/2053342/pexels-photo-2053342.jpeg" 
+                                     alt="Atlantic Salmon" class="rounded me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                                <span>Atlantic Salmon</span>
+                            </div>
+                        </td>
+                        <td>2024-01-15</td>
+                        <td>2024-03-15</td>
+                        <td>1,000</td>
+                        <td>945</td>
+                        <td>1,890</td>
+                        <td>2,000</td>
+                        <td><span class="badge bg-success">94.5%</span></td>
+                        <td><span class="badge bg-warning">A+</span></td>
+                    </tr>
+                    <tr>
+                        <td>#BATCH-002</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="https://images.pexels.com/photos/1051551/pexels-photo-1051551.jpeg" 
+                                     alt="Rainbow Trout" class="rounded me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                                <span>Rainbow Trout</span>
+                            </div>
+                        </td>
+                        <td>2024-01-20</td>
+                        <td>2024-03-20</td>
+                        <td>800</td>
+                        <td>752</td>
+                        <td>1,128</td>
+                        <td>1,500</td>
+                        <td><span class="badge bg-success">94.0%</span></td>
+                        <td><span class="badge bg-success">A</span></td>
+                    </tr>
+                    <tr>
+                        <td>#BATCH-003</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="https://images.pexels.com/photos/1002703/pexels-photo-1002703.jpeg" 
+                                     alt="Tilapia" class="rounded me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                                <span>Tilapia</span>
+                            </div>
+                        </td>
+                        <td>2024-02-01</td>
+                        <td>2024-03-10</td>
+                        <td>1,200</td>
+                        <td>1,140</td>
+                        <td>1,710</td>
+                        <td>1,500</td>
+                        <td><span class="badge bg-success">95.0%</span></td>
+                        <td><span class="badge bg-warning">A+</span></td>
+                    </tr>
+                    <tr>
+                        <td>#BATCH-004</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="https://images.pexels.com/photos/1108943/pexels-photo-1108943.jpeg" 
+                                     alt="Channel Catfish" class="rounded me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                                <span>Channel Catfish</span>
+                            </div>
+                        </td>
+                        <td>2024-02-10</td>
+                        <td>2024-03-25</td>
+                        <td>600</td>
+                        <td>570</td>
+                        <td>1,140</td>
+                        <td>2,000</td>
+                        <td><span class="badge bg-success">95.0%</span></td>
+                        <td><span class="badge bg-success">A</span></td>
+                    </tr>
+                    <tr>
+                        <td>#BATCH-005</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="https://images.pexels.com/photos/1722650/pexels-photo-1722650.jpeg" 
+                                     alt="Common Carp" class="rounded me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                                <span>Common Carp</span>
+                            </div>
+                        </td>
+                        <td>2024-02-15</td>
+                        <td>In Progress</td>
+                        <td>900</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td><span class="badge bg-info">In Progress</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Quality Control Alerts</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">Water Quality Check Required</h6>
+                                <p class="mb-1">Batch #BATCH-005 needs pH level monitoring</p>
+                                <small class="text-muted">Due: Today</small>
+                            </div>
+                            <span class="badge bg-warning">Medium</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">Growth Rate Below Target</h6>
+                                <p class="mb-1">Batch #BATCH-006 showing slower growth</p>
+                                <small class="text-muted">Detected: 2 days ago</small>
+                            </div>
+                            <span class="badge bg-danger">High</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">Feed Conversion Efficiency</h6>
+                                <p class="mb-1">Review feed plan for Batch #BATCH-007</p>
+                                <small class="text-muted">Scheduled: Tomorrow</small>
+                            </div>
+                            <span class="badge bg-info">Low</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Performance Metrics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6 text-center mb-3">
+                            <h4 class="text-success">1.8</h4>
+                            <p class="text-muted">Feed Conversion Ratio</p>
+                        </div>
+                        <div class="col-6 text-center mb-3">
+                            <h4 class="text-info">2.1 kg</h4>
+                            <p class="text-muted">Avg Market Weight</p>
+                        </div>
+                        <div class="col-6 text-center mb-3">
+                            <h4 class="text-primary">85 days</h4>
+                            <p class="text-muted">Avg Growth Cycle</p>
+                        </div>
+                        <div class="col-6 text-center mb-3">
+                            <h4 class="text-warning">$8.50</h4>
+                            <p class="text-muted">Cost per kg</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Production Trends Chart
+const productionCtx = document.getElementById('productionChart').getContext('2d');
+new Chart(productionCtx, {
+    type: 'line',
+    data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+            label: 'Fish Produced',
+            data: [2100, 2400, 2800, 3200, 2900, 3100],
+            borderColor: 'rgb(54, 162, 235)',
+            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+            tension: 0.4,
+            fill: true
+        }, {
+            label: 'Harvest Weight (kg)',
+            data: [1800, 2100, 2400, 2700, 2500, 2650],
+            borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+// Species Distribution Chart
+const speciesCtx = document.getElementById('speciesChart').getContext('2d');
+new Chart(speciesCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Atlantic Salmon', 'Rainbow Trout', 'Tilapia', 'Channel Catfish', 'Common Carp'],
+        datasets: [{
+            data: [35, 25, 20, 12, 8],
+            backgroundColor: [
+                '#FF6384',
+                '#36A2EB',
+                '#FFCE56',
+                '#4BC0C0',
+                '#9966FF'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+function generateProductionReport() {
+    showAlert('Production report is being generated...', 'info');
+    setTimeout(() => {
+        showAlert('Production report generated successfully!', 'success');
+    }, 2000);
+}
+</script>
+{% endblock %}

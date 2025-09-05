@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block title %}Feeding Logs - AquaCare{% endblock %}
+
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="page-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1><i class="fas fa-clipboard-list me-3"></i>Feeding Logs</h1>
+                <p class="mb-0">Track daily feeding activities and fish health parameters</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-primary" onclick="addFeedingLog()">
+                    <i class="fas fa-plus me-2"></i>Add Feeding Log
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="table-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3><i class="fas fa-history me-2"></i>Recent Feeding Records</h3>
+            <div class="d-flex gap-2">
+                <input type="date" class="form-control" style="width: 150px;">
+                <select class="form-select" style="width: 150px;">
+                    <option>All Plans</option>
+                    <option>Atlantic Salmon Plan</option>
+                    <option>Rainbow Trout Plan</option>
+                    <option>Tilapia Plan</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-success">
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Species</th>
+                        <th>Quantity Fed (kg)</th>
+                        <th>Water Temp (°C)</th>
+                        <th>pH Level</th>
+                        <th>Mortality</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in feeding_logs %}
+                    <tr>
+                        <td>{{ log.feeding_date }}</td>
+                        <td>{{ log.feeding_time }}</td>
+                        <td>{{ log.feed_plan.species.name }}</td>
+                        <td>{{ log.quantity_fed }}</td>
+                        <td>{{ log.water_temperature|default:"N/A" }}</td>
+                        <td>{{ log.ph_level|default:"N/A" }}</td>
+                        <td>{{ log.mortality_count }}</td>
+                        <td>{{ log.notes|default:"-" }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editFeedingLog('{{ log.id }}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteFeedingLog('{{ log.id }}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4 class="text-primary">{{ total_logs_month }}</h4>
+                    <p class="text-muted">Total Logs This Month</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4 class="text-success">{{ total_feed_used }} kg</h4>
+                    <p class="text-muted">Total Feed Used</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4 class="text-info">{{ avg_ph_level }}</h4>
+                    <p class="text-muted">Average pH Level</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4 class="text-warning">{{ total_mortality }}</h4>
+                    <p class="text-muted">Total Mortality</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Feeding Log Modal -->
+<div class="modal fade" id="addFeedingLogModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Add Feeding Log</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addFeedingLogForm" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Feed Plan</label>
+                            <select class="form-select" name="feed_plan_id" required>
+                                <option value="">Select Feed Plan</option>
+                                {% for plan in feed_plans %}
+                                <option value="{{ plan.id }}">{{ plan.species.name }} - {{ plan.feed_type }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Feeding Date</label>
+                            <input type="date" class="form-control" name="feeding_date" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Feeding Time</label>
+                            <input type="time" class="form-control" name="feeding_time" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Quantity Fed (kg)</label>
+                            <input type="number" class="form-control" name="quantity_fed" step="0.1" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Water Temperature (°C)</label>
+                            <input type="number" class="form-control" name="water_temperature" step="0.1">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">pH Level</label>
+                            <input type="number" class="form-control" name="ph_level" step="0.1" min="0" max="14">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Mortality Count</label>
+                            <input type="number" class="form-control" name="mortality_count" min="0" value="0">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" name="notes" rows="3"
+                            placeholder="Any observations or remarks..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-success" form="addFeedingLogForm">Save Log</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addFeedingLog() {
+        const modal = new bootstrap.Modal(document.getElementById('addFeedingLogModal'));
+        modal.show();
+    }
+
+    // Update form to use POST method
+    document.getElementById('addFeedingLogForm').addEventListener('submit', function (e) {
+        // Form will submit normally to Django view
+    });
+</script>
+{% endblock %}

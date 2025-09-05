@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}Producer Dashboard - AquaCare{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1><i class="fas fa-industry me-3"></i>Producer Dashboard</h1>
+                <p class="mb-0">Welcome back, {{ user.username }}!</p>
+            </div>
+            <div class="col-md-6 text-end">
+                <div class="d-flex align-items-center justify-content-end">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    <span id="currentDate"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <a href="/inventory/" class="text-decoration-none">
+                <div class="dashboard-card">
+                    <i class="fas fa-warehouse"></i>
+                    <h4>Inventory Management</h4>
+                    <p>Manage stock levels of fish, feed, and equipment. Track inventory turnover and reorder points.</p>
+                    <div class="mt-3">
+                        <i class="fas fa-arrow-right"></i> Manage Inventory
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <a href="/orders/" class="text-decoration-none">
+                <div class="dashboard-card">
+                    <i class="fas fa-clipboard-check"></i>
+                    <h4>Order Management</h4>
+                    <p>Review, approve, or reject incoming orders from farmers and agents. Process deliveries efficiently.</p>
+                    <div class="mt-3">
+                        <i class="fas fa-arrow-right"></i> Manage Orders
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <a href="/reports/" class="text-decoration-none">
+                <div class="dashboard-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h4>Production Reports</h4>
+                    <p>Track production data, harvest records, quality checks, and analyze business performance.</p>
+                    <div class="mt-3">
+                        <i class="fas fa-arrow-right"></i> View Reports
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <a href="/species/" class="text-decoration-none">
+                <div class="dashboard-card">
+                    <i class="fas fa-fish"></i>
+                    <h4>Species Management</h4>
+                    <p>Add and manage fish species information for farmers.</p>
+                    <div class="mt-3">
+                        <i class="fas fa-arrow-right"></i> Manage Species
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <a href="/delivery/" class="text-decoration-none">
+                <div class="dashboard-card">
+                    <i class="fas fa-truck"></i>
+                    <h4>Delivery Tracking</h4>
+                    <p>Monitor delivery status and coordinate with agents and workers.</p>
+                    <div class="mt-3">
+                        <i class="fas fa-arrow-right"></i> Track Deliveries
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Production Overview</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            <h3 class="text-success">156</h3>
+                            <p class="text-muted">Total Inventory Items</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <h3 class="text-info">23</h3>
+                            <p class="text-muted">Pending Orders</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <h3 class="text-warning">12</h3>
+                            <p class="text-muted">Low Stock Alerts</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <h3 class="text-primary">89%</h3>
+                            <p class="text-muted">Order Fulfillment</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Stock Alerts</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-circle text-danger me-2"></i>Fish Feed Type A - 5 kg left</li>
+                        <li class="mb-2"><i class="fas fa-circle text-warning me-2"></i>Water Filter - 8 units left</li>
+                        <li class="mb-2"><i class="fas fa-circle text-warning me-2"></i>pH Test Strips - 15 packs left</li>
+                        <li class="mb-0"><i class="fas fa-circle text-success me-2"></i>All other items in stock</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+</script>
+{% endblock %}

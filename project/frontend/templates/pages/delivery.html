@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+
+{% block title %}Delivery Management - AquaCare{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1><i class="fas fa-truck me-3"></i>Delivery Management</h1>
+                <p class="mb-0">Track deliveries and manage logistics between producers, agents, farmers, and workers</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-primary" onclick="assignDelivery()">
+                    <i class="fas fa-plus me-2"></i>Assign Delivery
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-clock fa-3x text-warning mb-2"></i>
+                    <h4 class="text-warning">34</h4>
+                    <p class="text-muted">Pending Deliveries</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-shipping-fast fa-3x text-info mb-2"></i>
+                    <h4 class="text-info">18</h4>
+                    <p class="text-muted">In Transit</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
+                    <h4 class="text-success">142</h4>
+                    <p class="text-muted">Delivered Today</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x text-primary mb-2"></i>
+                    <h4 class="text-primary">12</h4>
+                    <p class="text-muted">Active Workers</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3><i class="fas fa-list me-2"></i>Delivery Tracking</h3>
+            <div class="d-flex gap-2">
+                <select class="form-select" style="width: 150px;">
+                    <option>All Status</option>
+                    <option>Pending</option>
+                    <option>In Transit</option>
+                    <option>Delivered</option>
+                </select>
+                <input type="text" class="form-control" placeholder="Search deliveries..." style="width: 200px;">
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-info">
+                    <tr>
+                        <th>Delivery ID</th>
+                        <th>Order</th>
+                        <th>Producer</th>
+                        <th>Agent</th>
+                        <th>Worker</th>
+                        <th>Farmer</th>
+                        <th>Status</th>
+                        <th>Pickup Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#DEL-001</td>
+                        <td>
+                            <div>
+                                <strong>#ORD-001</strong>
+                                <br><small class="text-muted">Atlantic Salmon Fingerlings</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-industry fa-2x text-primary me-2"></i>
+                                <div>
+                                    <strong>AquaFarm Producer</strong>
+                                    <br><small class="text-muted">+1 555-0101</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-shipping-fast fa-2x text-warning me-2"></i>
+                                <div>
+                                    <strong>Mike Agent</strong>
+                                    <br><small class="text-muted">+1 555-0201</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-hard-hat fa-2x text-success me-2"></i>
+                                <div>
+                                    <strong>John Worker</strong>
+                                    <br><small class="text-muted">+1 555-0301</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-seedling fa-2x text-info me-2"></i>
+                                <div>
+                                    <strong>Sarah Farmer</strong>
+                                    <br><small class="text-muted">+1 555-0401</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-info">In Transit</span></td>
+                        <td>2024-03-15 09:00</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="trackDelivery(1)">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success" onclick="updateStatus(1)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>#DEL-002</td>
+                        <td>
+                            <div>
+                                <strong>#ORD-002</strong>
+                                <br><small class="text-muted">High Protein Fish Feed</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-industry fa-2x text-primary me-2"></i>
+                                <div>
+                                    <strong>FeedCorp Producer</strong>
+                                    <br><small class="text-muted">+1 555-0102</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-shipping-fast fa-2x text-warning me-2"></i>
+                                <div>
+                                    <strong>Lisa Agent</strong>
+                                    <br><small class="text-muted">+1 555-0202</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-hard-hat fa-2x text-success me-2"></i>
+                                <div>
+                                    <strong>Tom Worker</strong>
+                                    <br><small class="text-muted">+1 555-0302</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-seedling fa-2x text-info me-2"></i>
+                                <div>
+                                    <strong>Bob Farmer</strong>
+                                    <br><small class="text-muted">+1 555-0402</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-warning">Pending</span></td>
+                        <td>2024-03-16 10:30</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="trackDelivery(2)">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success" onclick="updateStatus(2)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>#DEL-003</td>
+                        <td>
+                            <div>
+                                <strong>#ORD-003</strong>
+                                <br><small class="text-muted">Aerator Pump System</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-industry fa-2x text-primary me-2"></i>
+                                <div>
+                                    <strong>EquipTech Producer</strong>
+                                    <br><small class="text-muted">+1 555-0103</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-shipping-fast fa-2x text-warning me-2"></i>
+                                <div>
+                                    <strong>Dave Agent</strong>
+                                    <br><small class="text-muted">+1 555-0203</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-hard-hat fa-2x text-success me-2"></i>
+                                <div>
+                                    <strong>Alex Worker</strong>
+                                    <br><small class="text-muted">+1 555-0303</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-seedling fa-2x text-info me-2"></i>
+                                <div>
+                                    <strong>Emma Farmer</strong>
+                                    <br><small class="text-muted">+1 555-0403</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-success">Delivered</span></td>
+                        <td>2024-03-14 08:15</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="trackDelivery(3)">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-info" onclick="viewDeliveryDetails(3)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% for delivery in deliveries %}
+                    <tr>
+                        <td>#DEL-{{ delivery.id|stringformat:"03d" }}</td>
+                        <td>
+                            <div>
+                                <strong>#ORD-{{ delivery.order.id|stringformat:"03d" }}</strong>
+                                <br><small class="text-muted">{{ delivery.order.inventory_item.item_name }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-industry fa-2x text-primary me-2"></i>
+                                <div>
+                                    <strong>{{ delivery.order.producer.username }}</strong>
+                                    <br><small class="text-muted">{{ delivery.order.producer.phone|default:"-" }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-shipping-fast fa-2x text-warning me-2"></i>
+                                <div>
+                                    <strong>{{ delivery.agent.username }}</strong>
+                                    <br><small class="text-muted">{{ delivery.agent.phone|default:"-" }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-hard-hat fa-2x text-success me-2"></i>
+                                <div>
+                                    <strong>{{ delivery.worker.username }}</strong>
+                                    <br><small class="text-muted">{{ delivery.worker.phone|default:"-" }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-seedling fa-2x text-info me-2"></i>
+                                <div>
+                                    <strong>{{ delivery.order.customer.username }}</strong>
+                                    <br><small class="text-muted">{{ delivery.order.customer.phone|default:"-" }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if delivery.is_delivered %}
+                                <span class="badge bg-success">Delivered</span>
+                            {% else %}
+                                <span class="badge bg-warning">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ delivery.pickup_date|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="trackDelivery({{ delivery.id }})">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </button>
+                            {% if not delivery.is_delivered %}
+                                <button class="btn btn-sm btn-outline-success" onclick="updateStatus({{ delivery.id }})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            {% else %}
+                                <button class="btn btn-sm btn-outline-info" onclick="viewDeliveryDetails({{ delivery.id }})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Delivery Tracking Modal -->
+<div class="modal fade" id="trackingModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title"><i class="fas fa-map-marker-alt me-2"></i>Delivery Tracking</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Delivery Information</h6>
+                        <p><strong>Delivery ID:</strong> #DEL-001</p>
+                        <p><strong>Order:</strong> #ORD-001</p>
+                        <p><strong>Status:</strong> <span class="badge bg-info">In Transit</span></p>
+                        <p><strong>Pickup Date:</strong> March 15, 2024 09:00</p>
+                        <p><strong>Expected Delivery:</strong> March 15, 2024 15:00</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Contact Information</h6>
+                        <p><strong>Agent:</strong> Mike Agent (+1 555-0201)</p>
+                        <p><strong>Worker:</strong> John Worker (+1 555-0301)</p>
+                        <p><strong>Farmer:</strong> Sarah Farmer (+1 555-0401)</p>
+                    </div>
+                </div>
+                <hr>
+                <h6>Delivery Progress</h6>
+                <div class="progress mb-3">
+                    <div class="progress-bar bg-info" role="progressbar" style="width: 60%"></div>
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item completed">
+                        <i class="fas fa-check-circle text-success"></i>
+                        <span>Order picked up from producer</span>
+                        <small class="text-muted">09:00 AM</small>
+                    </div>
+                    <div class="timeline-item completed">
+                        <i class="fas fa-truck text-info"></i>
+                        <span>In transit to farmer location</span>
+                        <small class="text-muted">11:30 AM</small>
+                    </div>
+                    <div class="timeline-item pending">
+                        <i class="fas fa-map-marker-alt text-muted"></i>
+                        <span>Delivery to farmer</span>
+                        <small class="text-muted">Expected: 15:00 PM</small>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info">Contact Worker</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline-item {
+    position: relative;
+    padding: 10px 0;
+    border-left: 2px solid #dee2e6;
+}
+
+.timeline-item.completed {
+    border-left-color: #28a745;
+}
+
+.timeline-item i {
+    position: absolute;
+    left: -10px;
+    background: white;
+    padding: 2px;
+}
+
+.timeline-item span {
+    margin-left: 20px;
+    font-weight: 500;
+}
+
+.timeline-item small {
+    display: block;
+    margin-left: 20px;
+    margin-top: 2px;
+}
+</style>
+
+<script>
+function assignDelivery() {
+    showAlert('Assign delivery functionality coming soon!', 'info');
+}
+
+function trackDelivery(deliveryId) {
+    const modal = new bootstrap.Modal(document.getElementById('trackingModal'));
+    modal.show();
+}
+
+function updateStatus(deliveryId) {
+    showAlert('Status updated successfully!', 'success');
+}
+
+function viewDeliveryDetails(deliveryId) {
+    showAlert('Opening delivery details...', 'info');
+}
+</script>
+{% endblock %}

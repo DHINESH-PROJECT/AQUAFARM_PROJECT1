@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Management - AquaCare{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1><i class="fas fa-clipboard-check me-3"></i>Order Management</h1>
+                <p class="mb-0">View, approve, or reject farmer and agent orders</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-primary" onclick="createOrder()">
+                    <i class="fas fa-plus me-2"></i>Create New Order
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-clock fa-3x text-warning mb-2"></i>
+                    <h4 class="text-warning">{{ pending_orders }}</h4>
+                    <p class="text-muted">Pending Orders</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
+                    <h4 class="text-success">{{ approved_orders }}</h4>
+                    <p class="text-muted">Approved Orders</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-shipping-fast fa-3x text-info mb-2"></i>
+                    <h4 class="text-info">{{ shipped_orders }}</h4>
+                    <p class="text-muted">Shipped Orders</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-dollar-sign fa-3x text-primary mb-2"></i>
+                    <h4 class="text-primary">${{ total_revenue }}</h4>
+                    <p class="text-muted">Total Revenue</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3><i class="fas fa-list me-2"></i>Recent Orders</h3>
+            <div class="d-flex gap-2">
+                <select class="form-select" style="width: 150px;">
+                    <option>All Status</option>
+                    <option>Pending</option>
+                    <option>Approved</option>
+                    <option>Shipped</option>
+                    <option>Delivered</option>
+                    <option>Rejected</option>
+                </select>
+                <input type="text" class="form-control" placeholder="Search orders..." style="width: 200px;">
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-warning">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                        <th>Status</th>
+                        <th>Order Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr data-order-id="{{ order.id }}">
+                        <td>#ORD-{{ order.id|stringformat:"03d" }}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                {% if order.customer.role == 'farmer' %}
+                                    <i class="fas fa-user-circle fa-2x text-success me-2"></i>
+                                {% else %}
+                                    <i class="fas fa-user-circle fa-2x text-primary me-2"></i>
+                                {% endif %}
+                                <div>
+                                    <strong>{{ order.customer.username }}</strong>
+                                    <br><small class="text-muted">{{ order.customer.role|title }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="https://images.pexels.com/photos/1059905/pexels-photo-1059905.jpeg" 
+                                     alt="{{ order.inventory_item.item_name }}" class="rounded me-2" 
+                                     style="width: 40px; height: 40px; object-fit: cover;">
+                                <span>{{ order.inventory_item.item_name }}</span>
+                            </div>
+                        </td>
+                        <td>{{ order.quantity }} {{ order.inventory_item.unit }}</td>
+                        <td>${{ order.total_price }}</td>
+                        <td class="order-status-cell">
+                            {% if order.status == 'pending' %}
+                                <span class="badge bg-warning">Pending</span>
+                            {% elif order.status == 'approved' %}
+                                <span class="badge bg-success">Approved</span>
+                            {% elif order.status == 'shipped' %}
+                                <span class="badge bg-info">Shipped</span>
+                            {% elif order.status == 'delivered' %}
+                                <span class="badge bg-primary">Delivered</span>
+                            {% else %}
+                                <span class="badge bg-danger">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ order.order_date|date:"Y-m-d" }}</td>
+                        <td class="order-actions-cell">
+                            {% if order.status == 'pending' %}
+                                <button class="btn btn-sm btn-success me-1" onclick="approveOrder('{{ order.id }}')">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger me-1" onclick="rejectOrder('{{ order.id }}')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            {% elif order.status == 'approved' %}
+                                <button class="btn btn-sm btn-info me-1" onclick="shipOrder('{{ order.id }}')">
+                                    <i class="fas fa-shipping-fast"></i>
+                                </button>
+                            {% elif order.status == 'shipped' %}
+                                <button class="btn btn-sm btn-primary me-1" onclick="trackOrder('{{ order.id }}')">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </button>
+                            {% endif %}
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewOrder('{{ order.id }}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Create Order Modal -->
+<div class="modal fade" id="createOrderModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Create New Order</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createOrderForm" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Select Item</label>
+                            <select class="form-select" name="inventory_item_id" required>
+                                <option value="">Choose an item</option>
+                                {% for item in inventory_items %}
+                                <option value="{{ item.id }}" data-price="{{ item.price_per_unit }}" data-unit="{{ item.unit }}">
+                                    {{ item.item_name }} - ${{ item.price_per_unit }}/{{ item.unit }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" class="form-control" name="quantity" step="0.1" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Unit Price</label>
+                            <input type="text" class="form-control" id="unitPrice" readonly>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Total Price</label>
+                            <input type="text" class="form-control" id="totalPrice" readonly>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" form="createOrderForm">Place Order</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal fade" id="orderDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-eye me-2"></i>Order Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Customer Information</h6>
+                        <p><strong>Name:</strong> John Farmer</p>
+                        <p><strong>Role:</strong> Farmer</p>
+                        <p><strong>Email:</strong> john@example.com</p>
+                        <p><strong>Phone:</strong> +1 555-0123</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Order Information</h6>
+                        <p><strong>Order ID:</strong> #ORD-001</p>
+                        <p><strong>Date:</strong> March 15, 2024</p>
+                        <p><strong>Status:</strong> <span class="badge bg-warning">Pending</span></p>
+                        <p><strong>Total:</strong> $225.00</p>
+                    </div>
+                </div>
+                <hr>
+                <h6>Items Ordered</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Atlantic Salmon Fingerlings</td>
+                                <td>150 pieces</td>
+                                <td>$1.50</td>
+                                <td>$225.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type
+                <button type="button" class="btn btn-success" onclick="approveOrder(1)">Approve Order</button>
+                <button type="button" class="btn btn-danger" onclick="rejectOrder(1)">Reject Order</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function createOrder() {
+    const modal = new bootstrap.Modal(document.getElementById('createOrderModal'));
+    modal.show();
+}
+
+// Calculate total price when quantity or item changes
+document.addEventListener('DOMContentLoaded', function() {
+    const itemSelect = document.querySelector('select[name="inventory_item_id"]');
+    const quantityInput = document.querySelector('input[name="quantity"]');
+    const unitPriceInput = document.getElementById('unitPrice');
+    const totalPriceInput = document.getElementById('totalPrice');
+    
+    function updatePrices() {
+        const selectedOption = itemSelect.options[itemSelect.selectedIndex];
+        const price = selectedOption.getAttribute('data-price');
+        const unit = selectedOption.getAttribute('data-unit');
+        const quantity = quantityInput.value;
+        
+        if (price && quantity) {
+            unitPriceInput.value = `$${price}/${unit}`;
+            totalPriceInput.value = `$${(parseFloat(price) * parseFloat(quantity)).toFixed(2)}`;
+        } else {
+            unitPriceInput.value = '';
+            totalPriceInput.value = '';
+        }
+    }
+    
+    itemSelect.addEventListener('change', updatePrices);
+    quantityInput.addEventListener('input', updatePrices);
+});
+
+function approveOrder(orderId) {
+    if (confirm('Are you sure you want to approve this order?')) {
+        fetch(`/ajax/approve_order/${orderId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                // Update status cell in table row
+                const row = document.querySelector(`tr[data-order-id='${orderId}']`);
+                if (row) {
+                    const statusCell = row.querySelector('.order-status-cell');
+                    if (statusCell) {
+                        statusCell.innerHTML = '<span class="badge bg-success">Approved</span>';
+                    }
+                    // Hide approve/reject buttons, show ship button
+                    const actionsCell = row.querySelector('.order-actions-cell');
+                    if (actionsCell) {
+                        actionsCell.innerHTML = `<button class="btn btn-sm btn-info me-1" onclick="shipOrder('${orderId}')"><i class="fas fa-shipping-fast"></i></button> <button class="btn btn-sm btn-outline-primary" onclick="viewOrder('${orderId}')"><i class="fas fa-eye"></i></button>`;
+                    }
+                }
+            } else {
+                showAlert(data.message, 'warning');
+            }
+        })
+        .catch(() => {
+            showAlert('Error approving order.', 'danger');
+        });
+    }
+}
+
+function rejectOrder(orderId) {
+    if (confirm('Are you sure you want to reject this order?')) {
+        showAlert('Order rejected successfully!', 'warning');
+    }
+}
+
+function shipOrder(orderId) {
+    showAlert('Order marked as shipped!', 'info');
+}
+
+function trackOrder(orderId) {
+    showAlert('Opening tracking details...', 'info');
+}
+
+function viewOrder(orderId) {
+    const modal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+    modal.show();
+}
+
+function getCSRFToken() {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'csrftoken') return value;
+    }
+    return '';
+}
+</script>
+{% endblock %}
