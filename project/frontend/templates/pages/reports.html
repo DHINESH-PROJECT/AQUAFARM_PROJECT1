@@ -74,17 +74,11 @@
                                     <h5>Feeding Reports</h5>
                                     <p class="text-muted">Comprehensive feeding logs and analysis</p>
                                     <div class="btn-group-vertical w-100">
-                                        <button class="btn btn-outline-danger mb-2" onclick="generateReport('feeding', 'pdf')">
+                                        <button class="btn btn-outline-danger mb-2" onclick="generateFilteredReport('feeding', 'pdf')">
                                             <i class="fas fa-file-pdf me-2"></i>Download PDF
                                         </button>
-                                        <button class="btn btn-outline-success mb-2" onclick="generateReport('feeding', 'xlsx')">
+                                        <button class="btn btn-outline-success mb-2" onclick="generateFilteredReport('feeding', 'xlsx')">
                                             <i class="fas fa-file-excel me-2"></i>Download Excel
-                                        </button>
-                                        <button class="btn btn-outline-primary mb-2" onclick="generateReport('feeding', 'docx')">
-                                            <i class="fas fa-file-word me-2"></i>Download Word
-                                        </button>
-                                        <button class="btn btn-outline-info" onclick="generateReport('feeding', 'csv')">
-                                            <i class="fas fa-file-csv me-2"></i>Download CSV
                                         </button>
                                     </div>
                                 </div>
@@ -98,17 +92,11 @@
                                     <h5>Feed Plans Report</h5>
                                     <p class="text-muted">Feed planning and schedule analysis</p>
                                     <div class="btn-group-vertical w-100">
-                                        <button class="btn btn-outline-danger mb-2" onclick="generateReport('plans', 'pdf')">
+                                        <button class="btn btn-outline-danger mb-2" onclick="generateFilteredReport('plans', 'pdf')">
                                             <i class="fas fa-file-pdf me-2"></i>Download PDF
                                         </button>
-                                        <button class="btn btn-outline-success mb-2" onclick="generateReport('plans', 'xlsx')">
+                                        <button class="btn btn-outline-success mb-2" onclick="generateFilteredReport('plans', 'xlsx')">
                                             <i class="fas fa-file-excel me-2"></i>Download Excel
-                                        </button>
-                                        <button class="btn btn-outline-primary mb-2" onclick="generateReport('plans', 'docx')">
-                                            <i class="fas fa-file-word me-2"></i>Download Word
-                                        </button>
-                                        <button class="btn btn-outline-info" onclick="generateReport('plans', 'csv')">
-                                            <i class="fas fa-file-csv me-2"></i>Download CSV
                                         </button>
                                     </div>
                                 </div>
@@ -122,17 +110,11 @@
                                     <h5>Inventory Report</h5>
                                     <p class="text-muted">Stock levels and inventory analysis</p>
                                     <div class="btn-group-vertical w-100">
-                                        <button class="btn btn-outline-danger mb-2" onclick="generateReport('inventory', 'pdf')">
+                                        <button class="btn btn-outline-danger mb-2" onclick="generateFilteredReport('inventory', 'pdf')">
                                             <i class="fas fa-file-pdf me-2"></i>Download PDF
                                         </button>
-                                        <button class="btn btn-outline-success mb-2" onclick="generateReport('inventory', 'xlsx')">
+                                        <button class="btn btn-outline-success mb-2" onclick="generateFilteredReport('inventory', 'xlsx')">
                                             <i class="fas fa-file-excel me-2"></i>Download Excel
-                                        </button>
-                                        <button class="btn btn-outline-primary mb-2" onclick="generateReport('inventory', 'docx')">
-                                            <i class="fas fa-file-word me-2"></i>Download Word
-                                        </button>
-                                        <button class="btn btn-outline-info" onclick="generateReport('inventory', 'csv')">
-                                            <i class="fas fa-file-csv me-2"></i>Download CSV
                                         </button>
                                     </div>
                                 </div>
@@ -143,20 +125,32 @@
                             <div class="card h-100">
                                 <div class="card-body text-center">
                                     <i class="fas fa-shopping-cart fa-3x text-primary mb-3"></i>
-                                    <h5>Sales Report</h5>
-                                    <p class="text-muted">Order history and sales analysis</p>
+                                    <h5>Orders Report</h5>
+                                    <p class="text-muted">Order history and order analysis</p>
                                     <div class="btn-group-vertical w-100">
-                                        <button class="btn btn-outline-danger mb-2" onclick="generateReport('sales', 'pdf')">
+                                        <button class="btn btn-outline-danger mb-2" onclick="generateFilteredReport('orders', 'pdf')">
                                             <i class="fas fa-file-pdf me-2"></i>Download PDF
                                         </button>
-                                        <button class="btn btn-outline-success mb-2" onclick="generateReport('sales', 'xlsx')">
+                                        <button class="btn btn-outline-success mb-2" onclick="generateFilteredReport('orders', 'xlsx')">
                                             <i class="fas fa-file-excel me-2"></i>Download Excel
                                         </button>
-                                        <button class="btn btn-outline-primary mb-2" onclick="generateReport('sales', 'docx')">
-                                            <i class="fas fa-file-word me-2"></i>Download Word
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-dollar-sign fa-3x text-success mb-3"></i>
+                                    <h5>Commission Report</h5>
+                                    <p class="text-muted">Agent commission and earnings analysis</p>
+                                    <div class="btn-group-vertical w-100">
+                                        <button class="btn btn-outline-danger mb-2" onclick="generateFilteredReport('commission', 'pdf')">
+                                            <i class="fas fa-file-pdf me-2"></i>Download PDF
                                         </button>
-                                        <button class="btn btn-outline-info" onclick="generateReport('sales', 'csv')">
-                                            <i class="fas fa-file-csv me-2"></i>Download CSV
+                                        <button class="btn btn-outline-success mb-2" onclick="generateFilteredReport('commission', 'xlsx')">
+                                            <i class="fas fa-file-excel me-2"></i>Download Excel
                                         </button>
                                     </div>
                                 </div>
@@ -176,6 +170,7 @@
                     <div class="mb-3">
                         <label class="form-label">Date Range</label>
                         <select class="form-select">
+                            <option>All Time</option>
                             <option>Last 7 days</option>
                             <option>Last 30 days</option>
                             <option>Last 3 months</option>
@@ -192,6 +187,7 @@
                             <option>Rainbow Trout</option>
                             <option>Tilapia</option>
                             <option>Channel Catfish</option>
+                            <option>Common Carp</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -203,7 +199,18 @@
                             <option>Agents</option>
                         </select>
                     </div>
-                    <button class="btn btn-success w-100">Apply Filters</button>
+                    <div class="mb-3">
+                        <label class="form-label">Custom Date Range</label>
+                        <div class="row">
+                            <div class="col-6">
+                                <input type="date" class="form-control" id="startDate" placeholder="Start Date">
+                            </div>
+                            <div class="col-6">
+                                <input type="date" class="form-control" id="endDate" placeholder="End Date">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-success w-100" onclick="applyFilters()">Apply Filters</button>
                 </div>
             </div>
             
@@ -213,72 +220,89 @@
                 </div>
                 <div class="card-body">
                     <div class="list-group list-group-flush">
+                        {% for report in recent_reports %}
                         <div class="list-group-item d-flex justify-content-between align-items-center">
                             <div>
-                                <strong>Feeding Report</strong>
-                                <br><small class="text-muted">March 15, 2024</small>
+                                <strong>{{ report.name }}</strong>
+                                <br><small class="text-muted">{{ report.date|date:"F d, Y" }}</small>
                             </div>
-                            <span class="badge bg-danger">PDF</span>
+                            {% if report.format|lower == 'pdf' %}
+                                <span class="badge bg-danger">{{ report.format|title }}</span>
+                            {% elif report.format|lower == 'excel' or report.format|lower == 'xlsx' %}
+                                <span class="badge bg-success">{{ report.format|title }}</span>
+                            {% elif report.format|lower == 'csv' %}
+                                <span class="badge bg-info">{{ report.format|title }}</span>
+                            {% elif report.format|lower == 'word' or report.format|lower == 'docx' %}
+                                <span class="badge bg-primary">{{ report.format|title }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ report.format|title }}</span>
+                            {% endif %}
+                            <a href="{{ report.download_url }}" class="btn btn-sm btn-outline-primary ms-2" download>
+                                <i class="fas fa-download"></i>
+                            </a>
                         </div>
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>Feed Plans Report</strong>
-                                <br><small class="text-muted">March 14, 2024</small>
-                            </div>
-                            <span class="badge bg-success">Excel</span>
-                        </div>
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>Inventory Report</strong>
-                                <br><small class="text-muted">March 13, 2024</small>
-                            </div>
-                            <span class="badge bg-primary">Word</span>
-                        </div>
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>Sales Report</strong>
-                                <br><small class="text-muted">March 12, 2024</small>
-                            </div>
-                            <span class="badge bg-info">CSV</span>
-                        </div>
+                        {% empty %}
+                        <div class="list-group-item text-center text-muted">No recent reports available</div>
+                        {% endfor %}
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Custom Date Range Modal -->
-<div class="modal fade" id="customDateModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title"><i class="fas fa-calendar-alt me-2"></i>Custom Date Range</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Start Date</label>
-                        <input type="date" class="form-control" name="start_date">
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">End Date</label>
-                        <input type="date" class="form-control" name="end_date">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary">Apply Date Range</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+// Global filter variables
+let currentFilters = {
+    startDate: '',
+    endDate: '',
+    species: '',
+    userRole: ''
+};
+
 function scheduleReport() {
     showAlert('Report scheduling functionality coming soon!', 'info');
+}
+
+function applyFilters() {
+    currentFilters.startDate = document.getElementById('startDate').value;
+    currentFilters.endDate = document.getElementById('endDate').value;
+    // Add other filter values as needed
+    showAlert('Filters applied successfully!', 'success');
+}
+
+function generateFilteredReport(reportType, format) {
+    showAlert(`Generating ${reportType} report in ${format.toUpperCase()} format...`, 'info');
+    
+    // Build URL with filters
+    let url = `/generate_report/${reportType}/${format}/`;
+    let params = new URLSearchParams();
+    
+    if (currentFilters.startDate) {
+        params.append('start_date', currentFilters.startDate);
+    }
+    if (currentFilters.endDate) {
+        params.append('end_date', currentFilters.endDate);
+    }
+    if (currentFilters.species) {
+        params.append('species', currentFilters.species);
+    }
+    
+    if (params.toString()) {
+        url += '?' + params.toString();
+    }
+    
+    // Create download link
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${reportType}_report_${new Date().getTime()}.${format}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    setTimeout(() => {
+        showAlert(`${reportType.charAt(0).toUpperCase() + reportType.slice(1)} report generated successfully!`, 'success');
+    }, 2000);
 }
 </script>
 {% endblock %}

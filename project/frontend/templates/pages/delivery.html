@@ -25,7 +25,7 @@
             <div class="card text-center">
                 <div class="card-body">
                     <i class="fas fa-clock fa-3x text-warning mb-2"></i>
-                    <h4 class="text-warning">34</h4>
+                    <h4 class="text-warning">{{ pending_count }}</h4>
                     <p class="text-muted">Pending Deliveries</p>
                 </div>
             </div>
@@ -34,7 +34,7 @@
             <div class="card text-center">
                 <div class="card-body">
                     <i class="fas fa-shipping-fast fa-3x text-info mb-2"></i>
-                    <h4 class="text-info">18</h4>
+                    <h4 class="text-info">{{ in_transit_count }}</h4>
                     <p class="text-muted">In Transit</p>
                 </div>
             </div>
@@ -43,7 +43,7 @@
             <div class="card text-center">
                 <div class="card-body">
                     <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
-                    <h4 class="text-success">142</h4>
+                    <h4 class="text-success">{{ delivered_today_count }}</h4>
                     <p class="text-muted">Delivered Today</p>
                 </div>
             </div>
@@ -52,7 +52,7 @@
             <div class="card text-center">
                 <div class="card-body">
                     <i class="fas fa-users fa-3x text-primary mb-2"></i>
-                    <h4 class="text-primary">12</h4>
+                    <h4 class="text-primary">{{ active_workers_count }}</h4>
                     <p class="text-muted">Active Workers</p>
                 </div>
             </div>
@@ -89,171 +89,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>#DEL-001</td>
-                        <td>
-                            <div>
-                                <strong>#ORD-001</strong>
-                                <br><small class="text-muted">Atlantic Salmon Fingerlings</small>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-industry fa-2x text-primary me-2"></i>
-                                <div>
-                                    <strong>AquaFarm Producer</strong>
-                                    <br><small class="text-muted">+1 555-0101</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-shipping-fast fa-2x text-warning me-2"></i>
-                                <div>
-                                    <strong>Mike Agent</strong>
-                                    <br><small class="text-muted">+1 555-0201</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-user-hard-hat fa-2x text-success me-2"></i>
-                                <div>
-                                    <strong>John Worker</strong>
-                                    <br><small class="text-muted">+1 555-0301</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-seedling fa-2x text-info me-2"></i>
-                                <div>
-                                    <strong>Sarah Farmer</strong>
-                                    <br><small class="text-muted">+1 555-0401</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="badge bg-info">In Transit</span></td>
-                        <td>2024-03-15 09:00</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="trackDelivery(1)">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-success" onclick="updateStatus(1)">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>#DEL-002</td>
-                        <td>
-                            <div>
-                                <strong>#ORD-002</strong>
-                                <br><small class="text-muted">High Protein Fish Feed</small>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-industry fa-2x text-primary me-2"></i>
-                                <div>
-                                    <strong>FeedCorp Producer</strong>
-                                    <br><small class="text-muted">+1 555-0102</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-shipping-fast fa-2x text-warning me-2"></i>
-                                <div>
-                                    <strong>Lisa Agent</strong>
-                                    <br><small class="text-muted">+1 555-0202</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-user-hard-hat fa-2x text-success me-2"></i>
-                                <div>
-                                    <strong>Tom Worker</strong>
-                                    <br><small class="text-muted">+1 555-0302</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-seedling fa-2x text-info me-2"></i>
-                                <div>
-                                    <strong>Bob Farmer</strong>
-                                    <br><small class="text-muted">+1 555-0402</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="badge bg-warning">Pending</span></td>
-                        <td>2024-03-16 10:30</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="trackDelivery(2)">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-success" onclick="updateStatus(2)">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>#DEL-003</td>
-                        <td>
-                            <div>
-                                <strong>#ORD-003</strong>
-                                <br><small class="text-muted">Aerator Pump System</small>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-industry fa-2x text-primary me-2"></i>
-                                <div>
-                                    <strong>EquipTech Producer</strong>
-                                    <br><small class="text-muted">+1 555-0103</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-shipping-fast fa-2x text-warning me-2"></i>
-                                <div>
-                                    <strong>Dave Agent</strong>
-                                    <br><small class="text-muted">+1 555-0203</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-user-hard-hat fa-2x text-success me-2"></i>
-                                <div>
-                                    <strong>Alex Worker</strong>
-                                    <br><small class="text-muted">+1 555-0303</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-seedling fa-2x text-info me-2"></i>
-                                <div>
-                                    <strong>Emma Farmer</strong>
-                                    <br><small class="text-muted">+1 555-0403</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="badge bg-success">Delivered</span></td>
-                        <td>2024-03-14 08:15</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="trackDelivery(3)">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-info" onclick="viewDeliveryDetails(3)">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </td>
-                    </tr>
                     {% for delivery in deliveries %}
                     <tr>
                         <td>#DEL-{{ delivery.id|stringformat:"03d" }}</td>
@@ -308,15 +143,15 @@
                         </td>
                         <td>{{ delivery.pickup_date|date:"Y-m-d H:i" }}</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="trackDelivery({{ delivery.id }})">
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="trackDelivery('{{ delivery.id }}')">
                                 <i class="fas fa-map-marker-alt"></i>
                             </button>
                             {% if not delivery.is_delivered %}
-                                <button class="btn btn-sm btn-outline-success" onclick="updateStatus({{ delivery.id }})">
+                                <button class="btn btn-sm btn-outline-success" onclick="updateStatus('{{ delivery.id }}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
                             {% else %}
-                                <button class="btn btn-sm btn-outline-info" onclick="viewDeliveryDetails({{ delivery.id }})">
+                                <button class="btn btn-sm btn-outline-info" onclick="viewDeliveryDetails('{{ delivery.id }}')">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             {% endif %}

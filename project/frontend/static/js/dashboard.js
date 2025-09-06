@@ -1,3 +1,7 @@
+function generateFilteredReport(reportType, format) {
+    // For now, just call generateReport. You can extend this to add filters.
+    generateReport(reportType, format);
+}
 // Dashboard JavaScript functionality
 document.addEventListener('DOMContentLoaded', function() {
     // Add click animations to dashboard cards

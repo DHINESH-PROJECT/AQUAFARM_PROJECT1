@@ -25,7 +25,7 @@
             <div class="card text-center">
                 <div class="card-body">
                     <i class="fas fa-wallet fa-3x text-success mb-2"></i>
-                    <h4 class="text-success">$2,450.75</h4>
+                    <h4 class="text-success">${{ total_earnings|floatformat:2 }}</h4>
                     <p class="text-muted">Total Earnings</p>
                 </div>
             </div>
@@ -34,7 +34,7 @@
             <div class="card text-center">
                 <div class="card-body">
                     <i class="fas fa-clock fa-3x text-warning mb-2"></i>
-                    <h4 class="text-warning">$1,245.30</h4>
+                    <h4 class="text-warning">${{ pending_commission|floatformat:2 }}</h4>
                     <p class="text-muted">Pending Commission</p>
                 </div>
             </div>
@@ -43,7 +43,7 @@
             <div class="card text-center">
                 <div class="card-body">
                     <i class="fas fa-check-circle fa-3x text-primary mb-2"></i>
-                    <h4 class="text-primary">$1,205.45</h4>
+                    <h4 class="text-primary">${{ paid_this_month|floatformat:2 }}</h4>
                     <p class="text-muted">Paid This Month</p>
                 </div>
             </div>
@@ -52,7 +52,7 @@
             <div class="card text-center">
                 <div class="card-body">
                     <i class="fas fa-percentage fa-3x text-info mb-2"></i>
-                    <h4 class="text-info">8.5%</h4>
+                    <h4 class="text-info">{{ avg_commission|floatformat:2 }}%</h4>
                     <p class="text-muted">Average Commission</p>
                 </div>
             </div>
@@ -79,7 +79,7 @@
                     <div class="mb-3">
                         <div class="d-flex justify-content-between">
                             <span>Deliveries Completed</span>
-                            <strong>142</strong>
+                            <strong>{{ deliveries_completed }}</strong>
                         </div>
                         <div class="progress">
                             <div class="progress-bar bg-success" style="width: 85%"></div>
@@ -136,81 +136,35 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for commission in commissions %}
                     <tr>
-                        <td>#ORD-001</td>
+                        <td>#ORD-{{ commission.order.id|stringformat:"03d" }}</td>
                         <td>
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-user-circle fa-2x text-success me-2"></i>
-                                <span>John Farmer</span>
+                                <span>{{ commission.order.customer.username }}</span>
                             </div>
                         </td>
-                        <td>$225.00</td>
-                        <td>8.0%</td>
-                        <td>$18.00</td>
-                        <td><span class="badge bg-success">Paid</span></td>
-                        <td>2024-03-15</td>
-                        <td>2024-03-20</td>
-                    </tr>
-                    <tr>
-                        <td>#ORD-002</td>
+                        <td>${{ commission.order.total_price }}</td>
+                        <td>{{ commission.commission_rate }}%</td>
+                        <td>${{ commission.commission_amount }}</td>
                         <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-user-circle fa-2x text-success me-2"></i>
-                                <span>Sarah Farmer</span>
-                            </div>
+                            {% if commission.is_paid %}
+                                <span class="badge bg-success">Paid</span>
+                            {% else %}
+                                <span class="badge bg-warning">Pending</span>
+                            {% endif %}
                         </td>
-                        <td>$112.50</td>
-                        <td>9.0%</td>
-                        <td>$10.13</td>
-                        <td><span class="badge bg-warning">Pending</span></td>
-                        <td>2024-03-14</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>#ORD-003</td>
+                        <td>{{ commission.created_at|date:"Y-m-d" }}</td>
                         <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-user-circle fa-2x text-success me-2"></i>
-                                <span>Bob Farmer</span>
-                            </div>
+                            {% if commission.payment_date %}
+                                {{ commission.payment_date|date:"Y-m-d" }}
+                            {% else %}
+                                -
+                            {% endif %}
                         </td>
-                        <td>$300.00</td>
-                        <td>7.5%</td>
-                        <td>$22.50</td>
-                        <td><span class="badge bg-success">Paid</span></td>
-                        <td>2024-03-13</td>
-                        <td>2024-03-18</td>
                     </tr>
-                    <tr>
-                        <td>#ORD-004</td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-user-circle fa-2x text-success me-2"></i>
-                                <span>Emma Farmer</span>
-                            </div>
-                        </td>
-                        <td>$450.00</td>
-                        <td>8.5%</td>
-                        <td>$38.25</td>
-                        <td><span class="badge bg-warning">Pending</span></td>
-                        <td>2024-03-12</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>#ORD-005</td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-user-circle fa-2x text-success me-2"></i>
-                                <span>Mike Farmer</span>
-                            </div>
-                        </td>
-                        <td>$180.00</td>
-                        <td>9.5%</td>
-                        <td>$17.10</td>
-                        <td><span class="badge bg-success">Paid</span></td>
-                        <td>2024-03-11</td>
-                        <td>2024-03-16</td>
-                    </tr>
+                    {% endfor %}
                     {% for commission in commissions %}
                     <tr>
                         <td>#ORD-{{ commission.order.id|stringformat:"03d" }}</td>
@@ -254,11 +208,11 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-6 text-center">
-                            <h4 class="text-primary">23</h4>
+                            <h4 class="text-primary">{{ monthly_orders_delivered }}</h4>
                             <p class="text-muted">Orders Delivered</p>
                         </div>
                         <div class="col-6 text-center">
-                            <h4 class="text-success">$245.80</h4>
+                            <h4 class="text-success">${{ monthly_commission_earned|floatformat:2 }}</h4>
                             <p class="text-muted">Commission Earned</p>
                         </div>
                     </div>
@@ -272,18 +226,14 @@
                 </div>
                 <div class="card-body">
                     <div class="list-group list-group-flush">
+                        {% for customer in top_customers %}
                         <div class="list-group-item d-flex justify-content-between">
-                            <span>John Farmer</span>
-                            <strong>$85.50</strong>
+                            <span>{{ customer.username }}</span>
+                            <strong>${{ customer.total_commission|floatformat:2 }}</strong>
                         </div>
-                        <div class="list-group-item d-flex justify-content-between">
-                            <span>Sarah Farmer</span>
-                            <strong>$72.30</strong>
-                        </div>
-                        <div class="list-group-item d-flex justify-content-between">
-                            <span>Bob Farmer</span>
-                            <strong>$58.20</strong>
-                        </div>
+                        {% empty %}
+                        <div class="list-group-item text-center text-muted">No data available</div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

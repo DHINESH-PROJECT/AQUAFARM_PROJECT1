@@ -34,9 +34,4 @@ urlpatterns = [
     path('ajax/delete_feed_plan/<int:plan_id>/', views.delete_feed_plan, name='delete_feed_plan'),
     path('ajax/delete_feeding_log/<int:log_id>/', views.delete_feeding_log, name='delete_feeding_log'),
     path('ajax/update_order_status/<int:order_id>/', views.update_order_status, name='update_order_status'),
-
-        # AJAX endpoints for feed plan edit
-        path('ajax/get_feed_plan/<int:plan_id>/', views.get_feed_plan, name='get_feed_plan'),
-        path('ajax/edit_feed_plan/<int:plan_id>/', views.edit_feed_plan, name='edit_feed_plan'),
-    path('ajax/approve_order/<int:order_id>/', views.ajax_approve_order, name='ajax_approve_order'),
 ]

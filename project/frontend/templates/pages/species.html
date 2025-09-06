@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Fish Species - AquaCare{% endblock %}
 
@@ -14,7 +15,7 @@
     <div class="species-grid">
         <!-- Sample Species Data - These would normally come from Django context -->
         <div class="species-card">
-            <img src="https://images.pexels.com/photos/2053342/pexels-photo-2053342.jpeg" alt="Atlantic Salmon">
+            <img src="{% static 'project/frontend/static/image/species/atlantic_salmon.jpg' %}" alt="Atlantic Salmon">
             <div class="species-info">
                 <h4>Atlantic Salmon</h4>
                 <p><em>Salmo salar</em></p>
@@ -28,7 +29,7 @@
         </div>
         
         <div class="species-card">
-            <img src="https://images.pexels.com/photos/1051551/pexels-photo-1051551.jpeg" alt="Rainbow Trout">
+            <img src="{% static 'image/species/rainbow_trout.jpg' %}" alt="Rainbow Trout">
             <div class="species-info">
                 <h4>Rainbow Trout</h4>
                 <p><em>Oncorhynchus mykiss</em></p>
@@ -42,7 +43,7 @@
         </div>
         
         <div class="species-card">
-            <img src="https://images.pexels.com/photos/1002703/pexels-photo-1002703.jpeg" alt="Tilapia">
+            <img src="{% static 'image/species/tilapia.jpg' %}" alt="Tilapia">
             <div class="species-info">
                 <h4>Tilapia</h4>
                 <p><em>Oreochromis niloticus</em></p>
@@ -56,7 +57,7 @@
         </div>
         
         <div class="species-card">
-            <img src="https://images.pexels.com/photos/1108943/pexels-photo-1108943.jpeg" alt="Catfish">
+            <img src="{% static 'image/species/channel_catfish.jpg' %}" alt="Channel Catfish">
             <div class="species-info">
                 <h4>Channel Catfish</h4>
                 <p><em>Ictalurus punctatus</em></p>
@@ -70,7 +71,7 @@
         </div>
         
         <div class="species-card">
-            <img src="https://images.pexels.com/photos/1722650/pexels-photo-1722650.jpeg" alt="Carp">
+            <img src="{% static 'image/species/common_carp.jpg' %}" alt="Common Carp">
             <div class="species-info">
                 <h4>Common Carp</h4>
                 <p><em>Cyprinus carpio</em></p>
@@ -84,7 +85,7 @@
         </div>
         
         <div class="species-card">
-            <img src="https://images.pexels.com/photos/1051359/pexels-photo-1051359.jpeg" alt="Bass">
+            <img src="{% static 'image/species/striped_bass.jpg' %}" alt="Striped Bass">
             <div class="species-info">
                 <h4>Striped Bass</h4>
                 <p><em>Morone saxatilis</em></p>
