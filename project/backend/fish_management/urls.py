@@ -5,7 +5,6 @@ urlpatterns = [
     # Home and Auth
     path('', views.home, name='home'),
     path('login/<str:role>/', views.login_page, name='login'),
-    path('register/', views.register_page, name='register'),
     path('logout/', views.logout_view, name='logout'),
     
     # Dashboards
@@ -20,11 +19,8 @@ urlpatterns = [
     path('inventory/', views.inventory_page, name='inventory'),
     path('orders/', views.orders_page, name='orders'),
     path('delivery/', views.delivery_page, name='delivery'),
-    path('reports/', views.reports_page, name='reports'),
     path('commission/', views.commission_page, name='commission'),
     
-    # Reports
-    path('generate_report/<str:report_type>/<str:format_type>/', views.generate_report, name='generate_report'),
     
     # API
     path('api/species/', views.api_species, name='api_species'),
