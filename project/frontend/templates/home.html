@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block content %}
 <div class="hero-section">
     <div class="container">
@@ -84,7 +86,8 @@
                 <a href="/register/" class="btn btn-primary btn-lg">Register Now</a>
             </div>
             <div class="col-lg-6">
-             <img src="http://images.openai.com/thumbnails/url/<image_identifier>.jpeg" alt="Fish farming" class="img-fluid rounded shadow" style="width:100%; max-width:400px; height:auto; object-fit:cover;">
+               <img src="{% static 'image/Aquafarming.jpg' %}" 
+                     alt="Aquaculture fish farming" class="img-fluid rounded shadow">
             </div>
         </div>
     </div>

@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %}Fish Species - AquaCare{% endblock %}
 
 {% block content %}
@@ -12,99 +14,16 @@
 
 <div class="container my-5">
     <div class="species-grid">
-        <!-- Sample Species Data - These would normally come from Django context -->
-        <div class="species-card">
-            <img src="https://images.pexels.com/photos/2053342/pexels-photo-2053342.jpeg" alt="Atlantic Salmon">
-            <div class="species-info">
-                <h4>Atlantic Salmon</h4>
-                <p><em>Salmo salar</em></p>
-                <div class="mb-3">
-                    <span class="badge bg-primary me-2">Optimal Temp: 12-18°C</span>
-                    <span class="badge bg-info me-2">pH: 6.0-8.0</span>
-                    <span class="badge bg-success">Feed: 3x daily</span>
-                </div>
-                <p>Atlantic salmon are anadromous fish that are prized for their high-quality meat and adaptability to various farming conditions.</p>
-            </div>
-        </div>
-        
-        <div class="species-card">
-            <img src="https://images.pexels.com/photos/1051551/pexels-photo-1051551.jpeg" alt="Rainbow Trout">
-            <div class="species-info">
-                <h4>Rainbow Trout</h4>
-                <p><em>Oncorhynchus mykiss</em></p>
-                <div class="mb-3">
-                    <span class="badge bg-primary me-2">Optimal Temp: 10-16°C</span>
-                    <span class="badge bg-info me-2">pH: 6.5-8.5</span>
-                    <span class="badge bg-success">Feed: 4x daily</span>
-                </div>
-                <p>Rainbow trout are hardy fish that grow quickly and are excellent for both commercial and recreational farming.</p>
-            </div>
-        </div>
-        
-        <div class="species-card">
-            <img src="https://images.pexels.com/photos/1002703/pexels-photo-1002703.jpeg" alt="Tilapia">
-            <div class="species-info">
-                <h4>Tilapia</h4>
-                <p><em>Oreochromis niloticus</em></p>
-                <div class="mb-3">
-                    <span class="badge bg-primary me-2">Optimal Temp: 20-30°C</span>
-                    <span class="badge bg-info me-2">pH: 6.5-8.5</span>
-                    <span class="badge bg-success">Feed: 2x daily</span>
-                </div>
-                <p>Tilapia are tropical fish known for their fast growth rate and tolerance to various water conditions.</p>
-            </div>
-        </div>
-        
-        <div class="species-card">
-            <img src="https://images.pexels.com/photos/1108943/pexels-photo-1108943.jpeg" alt="Catfish">
-            <div class="species-info">
-                <h4>Channel Catfish</h4>
-                <p><em>Ictalurus punctatus</em></p>
-                <div class="mb-3">
-                    <span class="badge bg-primary me-2">Optimal Temp: 24-29°C</span>
-                    <span class="badge bg-info me-2">pH: 6.5-8.5</span>
-                    <span class="badge bg-success">Feed: 2x daily</span>
-                </div>
-                <p>Channel catfish are bottom-dwelling fish that are highly adaptable and have excellent feed conversion rates.</p>
-            </div>
-        </div>
-        
-        <div class="species-card">
-            <img src="https://images.pexels.com/photos/1722650/pexels-photo-1722650.jpeg" alt="Carp">
-            <div class="species-info">
-                <h4>Common Carp</h4>
-                <p><em>Cyprinus carpio</em></p>
-                <div class="mb-3">
-                    <span class="badge bg-primary me-2">Optimal Temp: 18-24°C</span>
-                    <span class="badge bg-info me-2">pH: 6.5-8.0</span>
-                    <span class="badge bg-success">Feed: 3x daily</span>
-                </div>
-                <p>Common carp are hardy fish that can tolerate a wide range of environmental conditions and are popular in aquaculture.</p>
-            </div>
-        </div>
-        
-        <div class="species-card">
-            <img src="https://images.pexels.com/photos/1051359/pexels-photo-1051359.jpeg" alt="Bass">
-            <div class="species-info">
-                <h4>Striped Bass</h4>
-                <p><em>Morone saxatilis</em></p>
-                <div class="mb-3">
-                    <span class="badge bg-primary me-2">Optimal Temp: 15-25°C</span>
-                    <span class="badge bg-info me-2">pH: 7.0-8.5</span>
-                    <span class="badge bg-success">Feed: 3x daily</span>
-                </div>
-                <p>Striped bass are prized game fish that require specific conditions but offer high market value when successfully farmed.</p>
-            </div>
-        </div>
-        
-        <!-- Additional species cards would be generated from Django template loop -->
         {% for species in species_list %}
         <div class="species-card">
-            {% if species.image %}
-                <img src="{{ species.image.url }}" alt="{{ species.name }}">
-            {% else %}
-                <img src="https://images.pexels.com/photos/1059905/pexels-photo-1059905.jpeg" alt="{{ species.name }}">
-            {% endif %}
+            <!-- Show species image if available, otherwise show fish logo -->
+            <div style="text-align: center; margin-bottom: 15px;">
+                {% if species.image %}
+                    <img src="{{ species.image.url }}" alt="{{ species.name }}" style="width: 120px; height: 120px; object-fit: contain; display: block; margin: 0 auto; border-radius: 8px;">
+                {% else %}
+                    <img src="{% static 'image/fish_logo.png' %}" alt="Fish Logo" style="width: 120px; height: 120px; object-fit: contain; display: block; margin: 0 auto;">
+                {% endif %}
+            </div>
             <div class="species-info">
                 <h4>{{ species.name }}</h4>
                 <p><em>{{ species.scientific_name }}</em></p>

@@ -1113,6 +1113,7 @@ def api_species(request):
         'name': s.name,
         'scientific_name': s.scientific_name,
         'description': s.description,
+        'image': s.image.url if s.image else None,
         'optimal_temp': s.optimal_temp,
         'ph_range': s.ph_range,
         'feeding_frequency': s.feeding_frequency
