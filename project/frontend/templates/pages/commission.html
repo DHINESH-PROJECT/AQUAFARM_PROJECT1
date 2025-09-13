@@ -8,11 +8,14 @@
         <div class="row align-items-center">
             <div class="col-md-8">
                 <h1><i class="fas fa-dollar-sign me-3"></i>Commission & Earnings</h1>
-                <p class="mb-0">Track agent commissions and payment status</p>
+                <p class="mb-0">Track agent commissions based on completed deliveries</p>
             </div>
             <div class="col-md-4 text-end">
                 <button class="btn btn-primary" onclick="requestPayout()">
                     <i class="fas fa-money-check-alt me-2"></i>Request Payout
+                </button>
+                <button class="btn btn-info ms-2" onclick="showDeliveryDetails()">
+                    <i class="fas fa-truck me-2"></i>My Deliveries
                 </button>
             </div>
         </div>
@@ -20,40 +23,73 @@
 </div>
 
 <div class="container my-5">
+    <!-- Enhanced Statistics Dashboard -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card text-center">
+            <div class="card text-center border-success">
                 <div class="card-body">
                     <i class="fas fa-wallet fa-3x text-success mb-2"></i>
                     <h4 class="text-success">${{ total_earnings|floatformat:2 }}</h4>
                     <p class="text-muted">Total Earnings</p>
+                    <small class="text-info">From Delivered Orders</small>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-center">
+            <div class="card text-center border-warning">
                 <div class="card-body">
                     <i class="fas fa-clock fa-3x text-warning mb-2"></i>
                     <h4 class="text-warning">${{ pending_commission|floatformat:2 }}</h4>
                     <p class="text-muted">Pending Commission</p>
+                    <small class="text-info">Awaiting Payment</small>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-center">
+            <div class="card text-center border-primary">
                 <div class="card-body">
                     <i class="fas fa-check-circle fa-3x text-primary mb-2"></i>
                     <h4 class="text-primary">${{ paid_this_month|floatformat:2 }}</h4>
                     <p class="text-muted">Paid This Month</p>
+                    <small class="text-info">September 2025</small>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-center">
+            <div class="card text-center border-info">
                 <div class="card-body">
                     <i class="fas fa-percentage fa-3x text-info mb-2"></i>
-                    <h4 class="text-info">{{ avg_commission|floatformat:2 }}%</h4>
-                    <p class="text-muted">Average Commission</p>
+                    <h4 class="text-info">{{ commission_rate|floatformat:1 }}%</h4>
+                    <p class="text-muted">Commission Rate</p>
+                    <small class="text-info">Per Delivery</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delivery Performance Metrics -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h5 class="text-primary">{{ deliveries_completed }}</h5>
+                    <small class="text-muted">Total Deliveries Completed</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h5 class="text-success">{{ monthly_orders_delivered }}</h5>
+                    <small class="text-muted">Deliveries This Month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h5 class="text-info">{{ on_time_percentage|floatformat:1 }}%</h5>
+                    <small class="text-muted">On-Time Delivery Rate</small>
                 </div>
             </div>
         </div>
@@ -110,92 +146,200 @@
 
     <div class="table-container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3><i class="fas fa-list me-2"></i>Commission History</h3>
+            <h3><i class="fas fa-list me-2"></i>Commission from Deliveries</h3>
             <div class="d-flex gap-2">
-                <select class="form-select" style="width: 150px;">
-                    <option>All Status</option>
-                    <option>Pending</option>
-                    <option>Paid</option>
+                <select class="form-select" style="width: 150px;" id="statusFilter">
+                    <option value="">All Status</option>
+                    <option value="pending">Pending Payment</option>
+                    <option value="paid">Paid</option>
                 </select>
-                <input type="month" class="form-control" style="width: 150px;">
+                <input type="month" class="form-control" style="width: 150px;" id="monthFilter">
+                <button class="btn btn-outline-success" onclick="calculateCommissions()">
+                    <i class="fas fa-calculator me-1"></i>Recalculate
+                </button>
             </div>
         </div>
         
         <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-hover" id="commissionsTable">
                 <thead class="table-success">
                     <tr>
-                        <th>Order ID</th>
+                        <th>Delivery ID</th>
+                        <th>Order Details</th>
                         <th>Customer</th>
                         <th>Order Value</th>
                         <th>Commission Rate</th>
                         <th>Commission Amount</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Payment Date</th>
+                        <th>Delivery Status</th>
+                        <th>Payment Status</th>
+                        <th>Delivery Date</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for commission in commissions %}
-                    <tr>
-                        <td>#ORD-{{ commission.order.id|stringformat:"03d" }}</td>
+                    <tr data-status="{{ commission.is_paid|yesno:'paid,pending' }}">
+                        <td>
+                            <strong>#DEL-{{ commission.order.id|stringformat:"03d" }}</strong>
+                            <br><small class="text-muted">Order #{{ commission.order.id }}</small>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="https://images.pexels.com/photos/1059905/pexels-photo-1059905.jpeg" 
+                                     alt="{{ commission.order.inventory_item.item_name }}" class="rounded me-2" 
+                                     style="width: 40px; height: 40px; object-fit: cover;">
+                                <div>
+                                    <strong>{{ commission.order.inventory_item.item_name }}</strong>
+                                    <br><small class="text-muted">{{ commission.order.quantity }} {{ commission.order.inventory_item.unit }}</small>
+                                </div>
+                            </div>
+                        </td>
                         <td>
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-user-circle fa-2x text-success me-2"></i>
-                                <span>{{ commission.order.customer.username }}</span>
+                                <div>
+                                    <strong>{{ commission.order.customer.username }}</strong>
+                                    <br><small class="text-muted">{{ commission.order.customer.role|title }}</small>
+                                </div>
                             </div>
                         </td>
-                        <td>${{ commission.order.total_price }}</td>
-                        <td>{{ commission.commission_rate }}%</td>
-                        <td>${{ commission.commission_amount }}</td>
                         <td>
-                            {% if commission.is_paid %}
-                                <span class="badge bg-success">Paid</span>
+                            <div class="text-end">
+                                <h5 class="text-primary mb-1">${{ commission.order.total_price|floatformat:2 }}</h5>
+                                <small class="text-muted">Base Amount</small>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-info">{{ commission.commission_rate|floatformat:1 }}%</span>
+                        </td>
+                        <td>
+                            <div class="text-end">
+                                <h5 class="text-success mb-1">${{ commission.commission_amount|floatformat:2 }}</h5>
+                                <small class="text-muted">
+                                    {{ commission.commission_rate }}% of ${{ commission.order.total_price }}
+                                </small>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            {% if commission.order.status == 'delivered' %}
+                                <span class="badge bg-success">Delivered</span>
+                                <br><small class="text-info">Commission Earned</small>
                             {% else %}
-                                <span class="badge bg-warning">Pending</span>
+                                <span class="badge bg-warning">{{ commission.order.status|title }}</span>
+                                <br><small class="text-muted">Pending Delivery</small>
                             {% endif %}
                         </td>
-                        <td>{{ commission.created_at|date:"Y-m-d" }}</td>
-                        <td>
-                            {% if commission.payment_date %}
-                                {{ commission.payment_date|date:"Y-m-d" }}
+                        <td class="text-center">
+                            {% if commission.is_paid %}
+                                <span class="badge bg-success">Paid</span>
+                                <br><small class="text-muted">{{ commission.payment_date|date:"M d, Y" }}</small>
                             {% else %}
-                                -
+                                <span class="badge bg-warning">Pending</span>
+                                <br><small class="text-info">Awaiting Payment</small>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if commission.order.status == 'delivered' %}
+                                <strong>{{ commission.created_at|date:"M d, Y" }}</strong>
+                                <br><small class="text-muted">{{ commission.created_at|time:"H:i" }}</small>
+                            {% else %}
+                                <span class="text-muted">Not Delivered</span>
+                                <br><small class="text-info">Commission Pending</small>
                             {% endif %}
                         </td>
                     </tr>
-                    {% endfor %}
-                    {% for commission in commissions %}
+                    {% empty %}
                     <tr>
-                        <td>#ORD-{{ commission.order.id|stringformat:"03d" }}</td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-user-circle fa-2x text-success me-2"></i>
-                                <span>{{ commission.order.customer.username }}</span>
-                            </div>
-                        </td>
-                        <td>${{ commission.order.total_price }}</td>
-                        <td>{{ commission.commission_rate }}%</td>
-                        <td>${{ commission.commission_amount }}</td>
-                        <td>
-                            {% if commission.is_paid %}
-                                <span class="badge bg-success">Paid</span>
-                            {% else %}
-                                <span class="badge bg-warning">Pending</span>
-                            {% endif %}
-                        </td>
-                        <td>{{ commission.created_at|date:"Y-m-d" }}</td>
-                        <td>
-                            {% if commission.payment_date %}
-                                {{ commission.payment_date|date:"Y-m-d" }}
-                            {% else %}
-                                -
-                            {% endif %}
+                        <td colspan="9" class="text-center py-4">
+                            <i class="fas fa-truck fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Deliveries Completed Yet</h5>
+                            <p class="text-muted">Complete deliveries to start earning commissions!</p>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
+                <tfoot class="table-secondary">
+                    <tr>
+                        <th colspan="5">
+                            <strong>COMMISSION TOTALS</strong>
+                        </th>
+                        <th class="text-end">
+                            <span id="totalCommission">${{ total_earnings|add:pending_commission|floatformat:2 }}</span>
+                        </th>
+                        <th class="text-center">
+                            <span id="deliveryCount">{{ deliveries_completed }}</span> completed
+                        </th>
+                        <th class="text-center">
+                            Pending: $<span id="pendingAmount">{{ pending_commission|floatformat:2 }}</span>
+                        </th>
+                        <th></th>
+                    </tr>
+                </tfoot>
             </table>
+        </div>
+    </div>
+
+    <!-- Delivery Performance Section -->
+    <div class="row mt-5" id="deliveryStatsSection">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5><i class="fas fa-truck me-2"></i>My Delivery Performance</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Delivery ID</th>
+                                    <th>Customer</th>
+                                    <th>Item</th>
+                                    <th>Order Value</th>
+                                    <th>Commission Earned</th>
+                                    <th>Delivery Status</th>
+                                    <th>Delivery Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for delivery in deliveries %}
+                                <tr>
+                                    <td>#DEL-{{ delivery.id|stringformat:"03d" }}</td>
+                                    <td>{{ delivery.order.customer.username }}</td>
+                                    <td>{{ delivery.order.inventory_item.item_name }}</td>
+                                    <td>${{ delivery.order.total_price|floatformat:2 }}</td>
+                                    <td>
+                                        {% if delivery.is_delivered %}
+                                            <span class="text-success commission-amount" data-price="{{ delivery.order.total_price }}">$0.00</span>
+                                        {% else %}
+                                            <span class="text-muted">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if delivery.is_delivered %}
+                                            <span class="badge bg-success">Delivered</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">In Progress</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if delivery.delivery_date %}
+                                            {{ delivery.delivery_date|date:"M d, Y H:i" }}
+                                        {% else %}
+                                            <span class="text-muted">Not delivered</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-3">
+                                        <span class="text-muted">No deliveries assigned yet</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -329,5 +473,113 @@ function submitPayoutRequest() {
     const modal = bootstrap.Modal.getInstance(document.getElementById('payoutModal'));
     modal.hide();
 }
+
+// Filter commission records
+function filterCommissions() {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const monthFilter = document.getElementById('monthFilter').value;
+    const tableRows = document.querySelectorAll('#commissionsTable tbody tr[data-status]');
+    
+    let visibleRows = 0;
+    let filteredTotal = 0;
+    let filteredPending = 0;
+    
+    tableRows.forEach(row => {
+        let showRow = true;
+        
+        // Status filter
+        if (statusFilter && !row.getAttribute('data-status').includes(statusFilter)) {
+            showRow = false;
+        }
+        
+        if (showRow) {
+            row.style.display = '';
+            visibleRows++;
+            
+            // Calculate filtered totals
+            const commissionText = row.querySelector('td:nth-child(6) h5').textContent;
+            const commissionAmount = parseFloat(commissionText.replace('$', ''));
+            filteredTotal += commissionAmount;
+            
+            if (row.getAttribute('data-status') === 'pending') {
+                filteredPending += commissionAmount;
+            }
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    
+    console.log(`Showing ${visibleRows} records, Total: $${filteredTotal.toFixed(2)}`);
+}
+
+// Recalculate commissions (AJAX call to backend)
+function calculateCommissions() {
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Calculating...';
+    button.disabled = true;
+
+    // Make AJAX call to recalculate commissions
+    fetch('/ajax/recalculate_commissions/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert('Failed to recalculate commissions: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error recalculating commissions');
+    })
+    .finally(() => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+
+// Get CSRF token for AJAX requests
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Initialize filters when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const statusFilter = document.getElementById('statusFilter');
+    const monthFilter = document.getElementById('monthFilter');
+    
+    if (statusFilter) {
+        statusFilter.addEventListener('change', filterCommissions);
+    }
+    if (monthFilter) {
+        monthFilter.addEventListener('change', filterCommissions);
+    }
+    
+    // Calculate commission amounts using JavaScript
+    const commissionElements = document.querySelectorAll('.commission-amount[data-price]');
+    commissionElements.forEach(element => {
+        const price = parseFloat(element.getAttribute('data-price'));
+        const commission = (price * 5.0) / 100; // 5% commission
+        element.textContent = '$' + commission.toFixed(2);
+    });
+});
 </script>
 {% endblock %}

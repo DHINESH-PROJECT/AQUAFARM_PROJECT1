@@ -3,6 +3,15 @@
 {% block title %}Delivery Management - AquaCare{% endblock %}
 
 {% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
 <div class="page-header">
     <div class="container">
         <div class="row align-items-center">
@@ -11,9 +20,15 @@
                 <p class="mb-0">Track deliveries and manage logistics between producers, agents, farmers, and workers</p>
             </div>
             <div class="col-md-4 text-end">
-                <button class="btn btn-primary" onclick="assignDelivery()">
-                    <i class="fas fa-plus me-2"></i>Assign Delivery
-                </button>
+                {% if available_orders %}
+                    <button class="btn btn-primary" onclick="openAssignDeliveryModal()">
+                        <i class="fas fa-plus me-2"></i>Assign Delivery
+                    </button>
+                {% else %}
+                    <button class="btn btn-secondary" disabled title="No approved orders available">
+                        <i class="fas fa-plus me-2"></i>No Orders Available
+                    </button>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -164,6 +179,104 @@
     </div>
 </div>
 
+<!-- Assign Delivery Modal -->
+<div class="modal fade" id="assignDeliveryModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Assign New Delivery</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="assignDeliveryForm" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Select Order <span class="text-danger">*</span></label>
+                            <select class="form-select" name="order_id" id="orderSelect" required onchange="updateOrderDetails()">
+                                <option value="">Choose an approved order...</option>
+                                {% for order in available_orders %}
+                                <option value="{{ order.id }}" 
+                                        data-customer="{{ order.customer.username }}"
+                                        data-customer-phone="{{ order.customer.phone|default:'N/A' }}"
+                                        data-customer-address="{{ order.customer.address|default:'N/A' }}"
+                                        data-producer="{{ order.producer.username }}"
+                                        data-item="{{ order.inventory_item.item_name }}"
+                                        data-quantity="{{ order.quantity }}"
+                                        data-total="{{ order.total_price }}">
+                                    Order #{{ order.id }} - {{ order.inventory_item.item_name }} ({{ order.quantity }} units)
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Pickup Date & Time <span class="text-danger">*</span></label>
+                            <input type="datetime-local" class="form-control" name="pickup_date" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Assign Agent <span class="text-danger">*</span></label>
+                            <select class="form-select" name="agent_id" required>
+                                <option value="">Select an agent...</option>
+                                {% for agent in available_agents %}
+                                <option value="{{ agent.id }}">{{ agent.username }} - {{ agent.phone|default:'No phone' }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Assign Worker <span class="text-danger">*</span></label>
+                            <select class="form-select" name="worker_id" required>
+                                <option value="">Select a worker...</option>
+                                {% for worker in available_workers %}
+                                <option value="{{ worker.id }}">{{ worker.username }} - {{ worker.phone|default:'No phone' }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Delivery Address <span class="text-danger">*</span></label>
+                        <textarea class="form-control" name="delivery_address" rows="3" required 
+                                  placeholder="Enter complete delivery address..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Delivery Notes</label>
+                        <textarea class="form-control" name="delivery_notes" rows="2" 
+                                  placeholder="Any special instructions or notes..."></textarea>
+                    </div>
+                    
+                    <!-- Order Details Display -->
+                    <div id="orderDetails" class="card bg-light" style="display: none;">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Selected Order Details</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Customer:</strong> <span id="customerName">-</span></p>
+                                    <p><strong>Phone:</strong> <span id="customerPhone">-</span></p>
+                                    <p><strong>Producer:</strong> <span id="producerName">-</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Item:</strong> <span id="itemName">-</span></p>
+                                    <p><strong>Quantity:</strong> <span id="orderQuantity">-</span></p>
+                                    <p><strong>Total Price:</strong> $<span id="totalPrice">-</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" form="assignDeliveryForm">
+                    <i class="fas fa-check me-2"></i>Assign Delivery
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Delivery Tracking Modal -->
 <div class="modal fade" id="trackingModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -256,8 +369,116 @@
 </style>
 
 <script>
+function openAssignDeliveryModal() {
+    const modal = new bootstrap.Modal(document.getElementById('assignDeliveryModal'));
+    
+    // Set minimum pickup date to current datetime
+    const now = new Date();
+    const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    document.querySelector('input[name="pickup_date"]').min = localDateTime;
+    document.querySelector('input[name="pickup_date"]').value = localDateTime;
+    
+    modal.show();
+}
+
+function updateOrderDetails() {
+    const select = document.getElementById('orderSelect');
+    const selectedOption = select.options[select.selectedIndex];
+    const detailsDiv = document.getElementById('orderDetails');
+    
+    if (selectedOption.value) {
+        // Show order details
+        detailsDiv.style.display = 'block';
+        
+        // Update details
+        document.getElementById('customerName').textContent = selectedOption.dataset.customer;
+        document.getElementById('customerPhone').textContent = selectedOption.dataset.customerPhone;
+        document.getElementById('producerName').textContent = selectedOption.dataset.producer;
+        document.getElementById('itemName').textContent = selectedOption.dataset.item;
+        document.getElementById('orderQuantity').textContent = selectedOption.dataset.quantity;
+        document.getElementById('totalPrice').textContent = selectedOption.dataset.total;
+        
+        // Auto-fill delivery address if customer address is available
+        const customerAddress = selectedOption.dataset.customerAddress;
+        if (customerAddress && customerAddress !== 'N/A') {
+            document.querySelector('textarea[name="delivery_address"]').value = customerAddress;
+        }
+    } else {
+        detailsDiv.style.display = 'none';
+        document.querySelector('textarea[name="delivery_address"]').value = '';
+    }
+}
+
+// Form validation
+document.getElementById('assignDeliveryForm').addEventListener('submit', function(e) {
+    const orderSelect = document.querySelector('select[name="order_id"]');
+    const agentSelect = document.querySelector('select[name="agent_id"]');
+    const workerSelect = document.querySelector('select[name="worker_id"]');
+    const pickupDate = document.querySelector('input[name="pickup_date"]');
+    const deliveryAddress = document.querySelector('textarea[name="delivery_address"]');
+    
+    // Validation
+    if (!orderSelect.value) {
+        alert('Please select an order to assign.');
+        e.preventDefault();
+        return;
+    }
+    
+    if (!agentSelect.value) {
+        alert('Please select an agent for the delivery.');
+        e.preventDefault();
+        return;
+    }
+    
+    if (!workerSelect.value) {
+        alert('Please select a worker for the delivery.');
+        e.preventDefault();
+        return;
+    }
+    
+    if (!pickupDate.value) {
+        alert('Please set the pickup date and time.');
+        e.preventDefault();
+        return;
+    }
+    
+    // Check if pickup date is in the future
+    const selectedDate = new Date(pickupDate.value);
+    const now = new Date();
+    if (selectedDate <= now) {
+        alert('Pickup date must be in the future.');
+        e.preventDefault();
+        return;
+    }
+    
+    if (!deliveryAddress.value.trim()) {
+        alert('Please enter the delivery address.');
+        e.preventDefault();
+        return;
+    }
+    
+    // Confirm assignment
+    const orderText = orderSelect.options[orderSelect.selectedIndex].text;
+    const agentText = agentSelect.options[agentSelect.selectedIndex].text;
+    const workerText = workerSelect.options[workerSelect.selectedIndex].text;
+    
+    const confirmMessage = `Confirm delivery assignment:
+    
+Order: ${orderText}
+Agent: ${agentText}
+Worker: ${workerText}
+Pickup: ${new Date(pickupDate.value).toLocaleString()}
+    
+Proceed with assignment?`;
+    
+    if (!confirm(confirmMessage)) {
+        e.preventDefault();
+        return;
+    }
+});
+
 function assignDelivery() {
-    showAlert('Assign delivery functionality coming soon!', 'info');
+    openAssignDeliveryModal();
 }
 
 function trackDelivery(deliveryId) {
@@ -266,11 +487,62 @@ function trackDelivery(deliveryId) {
 }
 
 function updateStatus(deliveryId) {
-    showAlert('Status updated successfully!', 'success');
+    if (confirm('Mark this delivery as completed?')) {
+        // Make API call to update delivery status
+        fetch('/api/update_delivery_status/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                delivery_id: deliveryId,
+                action: 'mark_delivered'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                // Reload page to reflect changes
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showAlert(data.error || 'Error updating delivery status', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('Network error. Please try again.', 'danger');
+        });
+    }
 }
 
 function viewDeliveryDetails(deliveryId) {
     showAlert('Opening delivery details...', 'info');
 }
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const container = document.querySelector('.container').firstElementChild;
+    container.parentNode.insertBefore(alertDiv, container);
+    
+    // Auto dismiss after 5 seconds
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Delivery management page loaded');
+});
 </script>
 {% endblock %}

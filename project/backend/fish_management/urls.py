@@ -25,9 +25,19 @@ urlpatterns = [
     # API
     path('api/species/', views.api_species, name='api_species'),
     path('api/feed_plans/', views.api_feed_plans, name='api_feed_plans'),
+    path('api/feeding_stats/', views.api_feeding_stats, name='api_feeding_stats'),
+    path('api/inventory_stats/', views.api_inventory_stats, name='api_inventory_stats'),
+    path('api/update_stock/', views.api_update_stock, name='api_update_stock'),
+    path('api/delete_inventory/<int:item_id>/', views.api_delete_inventory_item, name='api_delete_inventory_item'),
+    path('api/update_delivery_status/', views.api_update_delivery_status, name='api_update_delivery_status'),
+    path('api/delivery_stats/', views.api_delivery_stats, name='api_delivery_stats'),
     
     # AJAX endpoints for data operations
     path('ajax/delete_feed_plan/<int:plan_id>/', views.delete_feed_plan, name='delete_feed_plan'),
     path('ajax/delete_feeding_log/<int:log_id>/', views.delete_feeding_log, name='delete_feeding_log'),
     path('ajax/update_order_status/<int:order_id>/', views.update_order_status, name='update_order_status'),
+    path('ajax/approve_order/<int:order_id>/', views.approve_order, name='approve_order'),
+    path('ajax/reject_order/<int:order_id>/', views.reject_order, name='reject_order'),
+    path('ajax/ship_order/<int:order_id>/', views.ship_order, name='ship_order'),
+    path('ajax/recalculate_commissions/', views.recalculate_commissions, name='recalculate_commissions'),
 ]

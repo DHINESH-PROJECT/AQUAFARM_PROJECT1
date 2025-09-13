@@ -28,8 +28,6 @@ A comprehensive web application for managing fish farming operations with role-b
 - **Django 4.2** - Web framework
 - **MySQL** - Database
 - **Django REST Framework** - API development
-- **ReportLab** - PDF generation
-- **OpenPyXL** - Excel report generation
 
 ### Frontend
 - **HTML5, CSS3, JavaScript** - Core technologies
@@ -162,18 +160,6 @@ The system includes 20+ sample records for each major entity:
 - User authentication and authorization
 - Secure password handling
 
-## Report Generation
-
-Generate comprehensive reports in multiple formats:
-- **PDF**: Professional formatted reports
-- **Excel**: Data analysis and spreadsheet format
-- **Word**: Detailed narrative reports
-
-Report types include:
-- Feeding activity summaries
-- Feed plan compliance
-- Production metrics
-- Commission tracking
 
 ## Responsive Design
 
