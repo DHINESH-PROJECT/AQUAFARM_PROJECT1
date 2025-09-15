@@ -428,8 +428,8 @@ def orders_page(request):
     rejected_orders = orders.filter(status='rejected').count()
     
     # Calculate additional metrics
-    completion_rate = (delivered_orders / max(order_stats['total_orders'], 1)) * 100
-    approval_rate = (approved_orders / max(pending_orders + approved_orders + rejected_orders, 1)) * 100
+    completion_rate = (delivered_orders / max(order_stats['total_orders'], 1)) * 100 if order_stats['total_orders'] else 0
+    approval_rate = (approved_orders / max(pending_orders + approved_orders + rejected_orders, 1)) * 100 if (pending_orders + approved_orders + rejected_orders) else 0
     
     # Get inventory items for order creation
     inventory_items = Inventory.objects.all().order_by('item_name')
@@ -450,9 +450,9 @@ def orders_page(request):
         'delivered_orders': delivered_orders,
         'rejected_orders': rejected_orders,
         'total_revenue': order_stats['total_revenue'],
-        'completion_rate': round(completion_rate, 1),
-        'approval_rate': round(approval_rate, 1),
-        'average_order_value': round(order_stats['average_order_value'], 2),
+        'completion_rate': round(completion_rate, 1) if completion_rate is not None else 0,
+        'approval_rate': round(approval_rate, 1) if approval_rate is not None else 0,
+        'average_order_value': round(order_stats['average_order_value'], 2) if order_stats['average_order_value'] is not None else 0,
         'total_quantity': order_stats['total_quantity']
     })
 

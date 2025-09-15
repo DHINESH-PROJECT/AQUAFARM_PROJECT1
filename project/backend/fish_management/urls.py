@@ -6,6 +6,9 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('login/<str:role>/', views.login_page, name='login'),
     path('logout/', views.logout_view, name='logout'),
+
+    # Register
+    path('register/', views.register_page, name='register'),
     
     # Dashboards
     path('farmer_dashboard/', views.farmer_dashboard, name='farmer_dashboard'),
